@@ -1,0 +1,39 @@
+name: Sync upstream
+
+# Periodically merges upstream binaricat/Netcatty main into this fork's main.
+# Manual trigger is available from the Actions tab ("Run workflow").
+
+on:
+  schedule:
+    - cron: '30 2 * * *' # daily, 02:30 UTC (10:30 Beijing time)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-upstream
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Merge upstream main
+        run: |
+          git config user.name "netcatty-sync-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git remote add upstream https://github.com/binaricat/Netcatty.git
+          git fetch upstream main
+          if git merge --ff-only upstream/main; then
+            echo "Fast-forwarded to upstream main."
+          else
+            echo "Local commits present; creating a merge commit."
+            git merge upstream/main -m "chore: sync upstream binaricat/Netcatty"
+          fi
+          git push origin main
