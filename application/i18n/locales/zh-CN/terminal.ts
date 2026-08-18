@@ -561,6 +561,8 @@ export const zhCNTerminalMessages: Messages = {
   'settings.shortcuts.binding.snippets': '打开代码片段',
   'settings.shortcuts.binding.broadcast': '切换广播模式',
   'settings.shortcuts.binding.toggle-side-panel': '切换侧边栏',
+  'settings.shortcuts.binding.side-panel-next-tool': '下一个侧边栏工具',
+  'settings.shortcuts.binding.side-panel-prev-tool': '上一个侧边栏工具',
   'settings.shortcuts.binding.sftp-copy': '复制文件',
   'settings.shortcuts.binding.sftp-cut': '剪切文件',
   'settings.shortcuts.binding.sftp-paste': '粘贴文件',

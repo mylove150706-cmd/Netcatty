@@ -843,6 +843,8 @@ Resalta el panel dividido enfocado:
   'settings.shortcuts.binding.snippets': 'Abrir fragmentos',
   'settings.shortcuts.binding.broadcast': 'Alternar modo de transmisión',
   'settings.shortcuts.binding.toggle-side-panel': 'Alternar panel lateral',
+  'settings.shortcuts.binding.side-panel-next-tool': 'Siguiente herramienta del panel lateral',
+  'settings.shortcuts.binding.side-panel-prev-tool': 'Herramienta anterior del panel lateral',
   'settings.shortcuts.binding.sftp-copy': 'Copiar archivos',
   'settings.shortcuts.binding.sftp-cut': 'Cortar archivos',
   'settings.shortcuts.binding.sftp-paste': 'Pegar archivos',

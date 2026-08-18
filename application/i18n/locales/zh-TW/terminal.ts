@@ -561,6 +561,8 @@ export const zhTWTerminalMessages: Messages = {
   'settings.shortcuts.binding.snippets': '開啟程式碼片段',
   'settings.shortcuts.binding.broadcast': '切換廣播模式',
   'settings.shortcuts.binding.toggle-side-panel': '切換側邊欄',
+  'settings.shortcuts.binding.side-panel-next-tool': '下一個側邊欄工具',
+  'settings.shortcuts.binding.side-panel-prev-tool': '上一個側邊欄工具',
   'settings.shortcuts.binding.sftp-copy': '複製檔案',
   'settings.shortcuts.binding.sftp-cut': '剪下檔案',
   'settings.shortcuts.binding.sftp-paste': '貼上檔案',

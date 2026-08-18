@@ -783,6 +783,8 @@ export const ruCoreMessages: Messages = {
   'settings.shortcuts.binding.snippets': 'Открыть сниппеты',
   'settings.shortcuts.binding.broadcast': 'Переключить режим трансляции',
   'settings.shortcuts.binding.toggle-side-panel': 'Переключить боковую панель',
+  'settings.shortcuts.binding.side-panel-next-tool': 'Следующий инструмент боковой панели',
+  'settings.shortcuts.binding.side-panel-prev-tool': 'Предыдущий инструмент боковой панели',
   'settings.shortcuts.binding.sftp-copy': 'Копировать файл',
   'settings.shortcuts.binding.sftp-cut': 'Вырезать файл',
   'settings.shortcuts.binding.sftp-paste': 'Вставить файл',
