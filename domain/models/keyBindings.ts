@@ -273,6 +273,8 @@ export const DEFAULT_KEY_BINDINGS: KeyBinding[] = [
   { id: 'snippets', action: 'snippets', label: 'Open Snippets', mac: '⌘ + Shift + S', pc: 'Ctrl + Shift + S', category: 'app' },
   { id: 'broadcast', action: 'broadcast', label: 'Switch the Broadcast Mode', mac: '⌘ + B', pc: 'Ctrl + B', category: 'app' },
   { id: 'toggle-side-panel', action: 'toggleSidePanel', label: 'Toggle Side Panel', mac: '⌘ + \\', pc: 'Ctrl + \\', category: 'app' },
+  { id: 'side-panel-next-tool', action: 'sidePanelNextTool', label: 'Next Side Panel Tool', mac: '⌘ + ⌥ + ]', pc: 'Ctrl + Alt + ]', category: 'app' },
+  { id: 'side-panel-prev-tool', action: 'sidePanelPrevTool', label: 'Previous Side Panel Tool', mac: '⌘ + ⌥ + [', pc: 'Ctrl + Alt + [', category: 'app' },
   { id: 'open-settings', action: 'openSettings', label: 'Open Settings', mac: '⌘ + ,', pc: 'Ctrl + ,', category: 'app' },
 
   // SFTP Operations
