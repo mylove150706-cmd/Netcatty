@@ -258,6 +258,16 @@ html.platform-win32 {
   container-type: inline-size;
 }
 
+.terminal-topbar-icon {
+  width: var(--terminal-topbar-icon);
+  height: var(--terminal-topbar-icon);
+}
+
+.terminal-topbar-icon-lg {
+  width: var(--terminal-topbar-icon-lg);
+  height: var(--terminal-topbar-icon-lg);
+}
+
 .terminal-title-cluster {
   min-width: 8rem;
 }

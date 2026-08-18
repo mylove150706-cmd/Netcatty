@@ -16,6 +16,7 @@ import {
   resolveTerminalTimestampGutterColor,
   resolveTerminalTimestampGutterWidth,
 } from './TerminalTimestampGutter';
+import { terminalTopbarMetrics } from './topbarMetrics';
 import {
   Dialog,
   DialogContent,
@@ -258,13 +259,15 @@ export function resolveTerminalTopOffsets({
   isSearchOpen,
   terminalBodyInset = 4,
   networkDeviceTipHeight = 0,
+  hostInfoBarHeight = 28,
 }: {
   showHostInfoBar: boolean;
   isSearchOpen: boolean;
   terminalBodyInset?: number;
   networkDeviceTipHeight?: number;
+  hostInfoBarHeight?: number;
 }): { toolbarOffset: number; contentTop: string } {
-  const toolbarOffset = isSearchOpen ? 64 : showHostInfoBar ? 30 : 0;
+  const toolbarOffset = isSearchOpen ? 64 : showHostInfoBar ? hostInfoBarHeight + 2 : 0;
   return {
     toolbarOffset,
     // The tip strip stacks directly below the toolbar, so the terminal
@@ -385,7 +388,9 @@ function TerminalViewInner({ ctx }: { ctx: TerminalViewContext }) {
     isSearchOpen,
     terminalBodyInset,
     networkDeviceTipHeight: showNetworkDeviceTip ? NETWORK_DEVICE_TIP_HEIGHT : 0,
+    hostInfoBarHeight: terminalSettings?.hostInfoBarHeight ?? 28,
   });
+  const topbarMetrics = terminalTopbarMetrics(terminalSettings?.hostInfoBarHeight ?? 28);
   const terminalRightInset = resolveTerminalRightInset({
     showHostInfoBar,
     isSearchOpen,
@@ -574,13 +579,20 @@ function TerminalViewInner({ ctx }: { ctx: TerminalViewContext }) {
               ['--terminal-toolbar-btn' as never]: 'var(--terminal-ui-toolbar-btn)',
               ['--terminal-toolbar-btn-hover' as never]: 'var(--terminal-ui-toolbar-btn-hover)',
               ['--terminal-toolbar-btn-active' as never]: 'var(--terminal-ui-toolbar-btn-active)',
+              ['--terminal-topbar-h' as never]: `${topbarMetrics.heightPx}px`,
+              ['--terminal-topbar-text' as never]: `${topbarMetrics.textPx}px`,
+              ['--terminal-topbar-stats' as never]: `${topbarMetrics.statsPx}px`,
+              ['--terminal-topbar-icon' as never]: `${topbarMetrics.iconPx}px`,
+              ['--terminal-topbar-icon-lg' as never]: `${topbarMetrics.iconLgPx}px`,
+              ['--terminal-topbar-btn-h' as never]: `${topbarMetrics.buttonPx}px`,
+              height: `${topbarMetrics.heightPx}px`,
             } as React.CSSProperties;
 
             const terminalActionsBody = (
               <>
                 <div
                   className={cn(
-                    "flex items-center gap-1 text-[11px] font-semibold min-w-0 overflow-hidden shrink",
+                    "flex items-center gap-1 text-[length:var(--terminal-topbar-text)] font-semibold min-w-0 overflow-hidden shrink",
                     showHostInfoBar && "terminal-title-cluster",
                   )}
                 >
@@ -599,7 +611,7 @@ function TerminalViewInner({ ctx }: { ctx: TerminalViewContext }) {
                       data-terminal-detach-drag-handle="true"
                       onPointerDown={onDetachPointerDown}
                     >
-                      <GripVertical size={12} strokeWidth={2} aria-hidden="true" />
+                      <GripVertical size={12} strokeWidth={2} aria-hidden="true" className="terminal-topbar-icon-lg" />
                     </div>
                   )}
                   {showHostInfoBar && <div
@@ -630,7 +642,7 @@ function TerminalViewInner({ ctx }: { ctx: TerminalViewContext }) {
                           }}
                           aria-label={t("terminal.statusbar.copyHostname.label")}
                         >
-                          <Copy size={10} />
+                          <Copy size={10} className="terminal-topbar-icon" />
                         </button>
                       </TooltipTrigger>
                       <TooltipContent side="bottom">{t("terminal.statusbar.copyHostname.tooltip", { hostname: host.hostname })}</TooltipContent>
@@ -658,7 +670,7 @@ function TerminalViewInner({ ctx }: { ctx: TerminalViewContext }) {
                           aria-label={lineTimestampToggleLabel}
                           aria-pressed={showLineTimestampGutter}
                         >
-                          <Clock3 size={10} />
+                          <Clock3 size={10} className="terminal-topbar-icon" />
                         </button>
                       </TooltipTrigger>
                       <TooltipContent side="bottom">{lineTimestampToggleLabel}</TooltipContent>
@@ -673,7 +685,7 @@ function TerminalViewInner({ ctx }: { ctx: TerminalViewContext }) {
                           onClick={onOpenSystem}
                           aria-label={t("terminal.layer.system")}
                         >
-                          <Activity size={10} />
+                          <Activity size={10} className="terminal-topbar-icon" />
                         </button>
                       </TooltipTrigger>
                       <TooltipContent side="bottom">{t("terminal.layer.system")}</TooltipContent>
@@ -702,7 +714,7 @@ function TerminalViewInner({ ctx }: { ctx: TerminalViewContext }) {
                               disabled={!shouldEnableStatusBarDisconnect(status)}
                               aria-label={t("terminal.statusbar.disconnect.label")}
                             >
-                              <Unplug size={10} />
+                              <Unplug size={10} className="terminal-topbar-icon" />
                             </button>
                           </TooltipTrigger>
                           <TooltipContent side="bottom">{t("terminal.statusbar.disconnect.tooltip")}</TooltipContent>
@@ -725,7 +737,7 @@ function TerminalViewInner({ ctx }: { ctx: TerminalViewContext }) {
                               disabled={!shouldEnableStatusBarReconnect(status)}
                               aria-label={t("terminal.statusbar.reconnect.label")}
                             >
-                              <RefreshCcw size={10} />
+                              <RefreshCcw size={10} className="terminal-topbar-icon" />
                             </button>
                           </TooltipTrigger>
                           <TooltipContent side="bottom">{t("terminal.statusbar.reconnect.tooltip")}</TooltipContent>
@@ -752,7 +764,7 @@ function TerminalViewInner({ ctx }: { ctx: TerminalViewContext }) {
                           variant="secondary"
                           size="icon"
                           className={cn(
-                            "h-6 w-6 p-0 shadow-none border-none text-[color:var(--terminal-toolbar-fg)]",
+                            "h-[length:var(--terminal-topbar-btn-h)] w-[length:var(--terminal-topbar-btn-h)] p-0 shadow-none border-none text-[color:var(--terminal-toolbar-fg)]",
                             "bg-transparent hover:bg-transparent",
                             isBroadcastEnabled && "text-green-500",
                           )}
@@ -763,7 +775,7 @@ function TerminalViewInner({ ctx }: { ctx: TerminalViewContext }) {
                               : t("terminal.toolbar.broadcastEnable")
                           }
                         >
-                          <Radio size={12} />
+                          <Radio size={12} className="terminal-topbar-icon-lg" />
                         </Button>
                       </TooltipTrigger>
                       <TooltipContent side="bottom">
@@ -779,11 +791,11 @@ function TerminalViewInner({ ctx }: { ctx: TerminalViewContext }) {
                         <Button
                           variant="secondary"
                           size="icon"
-                          className="h-6 w-6 p-0 shadow-none border-none text-[color:var(--terminal-toolbar-fg)] bg-transparent hover:bg-transparent"
+                          className="h-[length:var(--terminal-topbar-btn-h)] w-[length:var(--terminal-topbar-btn-h)] p-0 shadow-none border-none text-[color:var(--terminal-toolbar-fg)] bg-transparent hover:bg-transparent"
                           onClick={onDetach}
                           aria-label={t('terminal.toolbar.detach')}
                         >
-                          <SquareArrowOutUpRight size={12} />
+                          <SquareArrowOutUpRight size={12} className="terminal-topbar-icon" />
                         </Button>
                       </TooltipTrigger>
                       <TooltipContent side="bottom">{t('terminal.toolbar.detach')}</TooltipContent>
@@ -795,11 +807,11 @@ function TerminalViewInner({ ctx }: { ctx: TerminalViewContext }) {
                         <Button
                           variant="secondary"
                           size="icon"
-                          className="h-6 w-6 p-0 shadow-none border-none text-[color:var(--terminal-toolbar-fg)] bg-transparent hover:bg-transparent"
+                          className="h-[length:var(--terminal-topbar-btn-h)] w-[length:var(--terminal-topbar-btn-h)] p-0 shadow-none border-none text-[color:var(--terminal-toolbar-fg)] bg-transparent hover:bg-transparent"
                           onClick={onExpandToFocus}
                           aria-label={t("terminal.toolbar.focusMode")}
                         >
-                          <Maximize2 size={12} />
+                          <Maximize2 size={12} className="terminal-topbar-icon" />
                         </Button>
                       </TooltipTrigger>
                       <TooltipContent side="bottom">{t("terminal.toolbar.focusMode")}</TooltipContent>
@@ -887,7 +899,7 @@ function TerminalViewInner({ ctx }: { ctx: TerminalViewContext }) {
               <div
                 id={`terminal-actions-${sessionId}`}
                 className={cn(
-                  "terminal-topbar flex items-center gap-1 py-0.5 backdrop-blur-md min-w-0",
+                  "terminal-topbar flex items-center gap-1 backdrop-blur-md min-w-0",
                   showHostInfoBar
                     ? "px-2 pointer-events-auto"
                     : "ml-auto w-fit rounded-bl-md px-1 pointer-events-auto",
@@ -918,9 +930,11 @@ function TerminalViewInner({ ctx }: { ctx: TerminalViewContext }) {
         <div
           className={cn(
             "flex-1 min-h-0 min-w-0 relative overflow-hidden",
-            showHostInfoBar && "pt-8",
           )}
-          style={{ backgroundColor: 'var(--terminal-ui-bg)' }}
+          style={{
+            backgroundColor: 'var(--terminal-ui-bg)',
+            ...(showHostInfoBar ? { paddingTop: `${topbarMetrics.terminalOffsetPx}px` } : {}),
+          }}
         >
           {showNetworkDeviceTip && (
             <div

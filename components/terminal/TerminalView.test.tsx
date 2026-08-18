@@ -286,6 +286,17 @@ test("network device tip reserves extra top space below the toolbar", () => {
   );
 });
 
+test("resolveTerminalTopOffsets scales with hostInfoBarHeight", () => {
+  assert.deepEqual(
+    resolveTerminalTopOffsets({ showHostInfoBar: true, isSearchOpen: false, hostInfoBarHeight: 40 }),
+    { toolbarOffset: 42, contentTop: "46px" },
+  );
+  assert.deepEqual(
+    resolveTerminalTopOffsets({ showHostInfoBar: true, isSearchOpen: false, hostInfoBarHeight: 22 }),
+    { toolbarOffset: 24, contentTop: "28px" },
+  );
+});
+
 test("network device tip clears the compact speed-dial toggle only when it is present", () => {
   // Speed dial only renders when host info is hidden and search is closed;
   // reserve right-side room there so the tip cannot cover its click target.

@@ -52,7 +52,7 @@ export const TerminalServerStats: React.FC<TerminalServerStatsProps> = ({
   if (!enabled || !isConnected || !serverStats.lastUpdated) return null;
 
   return (
-              <div className="terminal-server-stats flex items-center gap-2 ml-1 text-[10px] opacity-80 flex-nowrap overflow-hidden min-w-0 shrink">
+              <div className="terminal-server-stats flex items-center gap-2 ml-1 text-[length:var(--terminal-topbar-stats)] opacity-80 flex-nowrap overflow-hidden min-w-0 shrink">
                 {/* CPU with HoverCard for per-core details */}
                 <HoverCard openDelay={200} closeDelay={100}>
                   <HoverCardTrigger asChild>
@@ -60,7 +60,7 @@ export const TerminalServerStats: React.FC<TerminalServerStatsProps> = ({
                       className="flex items-center gap-0.5 hover:opacity-100 opacity-80 transition-opacity cursor-pointer min-w-0 shrink"
                       aria-label={t("terminal.serverStats.cpu")}
                     >
-                      <Cpu size={10} className="flex-shrink-0" />
+                      <Cpu size={10} className="flex-shrink-0 terminal-topbar-icon" />
                       <span className="truncate">
                         {serverStats.cpu !== null ? `${serverStats.cpu}%` : '--'}
                         {serverStats.cpuCores !== null && ` (${serverStats.cpuCores}C)`}
@@ -129,7 +129,7 @@ export const TerminalServerStats: React.FC<TerminalServerStatsProps> = ({
                       className="flex items-center gap-0.5 hover:opacity-100 opacity-80 transition-opacity cursor-pointer min-w-0 shrink"
                       aria-label={t("terminal.serverStats.memory")}
                     >
-                      <MemoryStick size={10} className="flex-shrink-0" />
+                      <MemoryStick size={10} className="flex-shrink-0 terminal-topbar-icon" />
                       <span className="truncate">
                         {serverStats.memUsed !== null && serverStats.memTotal !== null
                           ? `${(serverStats.memUsed / 1024).toFixed(1)}/${(serverStats.memTotal / 1024).toFixed(1)}G`
@@ -256,7 +256,7 @@ export const TerminalServerStats: React.FC<TerminalServerStatsProps> = ({
                       className="flex items-center gap-0.5 hover:opacity-100 opacity-80 transition-opacity cursor-pointer min-w-0 shrink"
                       aria-label={t("terminal.serverStats.disk")}
                     >
-                      <HardDrive size={10} className="flex-shrink-0" />
+                      <HardDrive size={10} className="flex-shrink-0 terminal-topbar-icon" />
                       <span className={cn(
                         "truncate",
                         diskSummary.percent !== null && diskSummary.percent >= 90 && "text-red-400",
@@ -324,11 +324,11 @@ export const TerminalServerStats: React.FC<TerminalServerStatsProps> = ({
                         className="flex items-center gap-1 hover:opacity-100 opacity-80 transition-opacity cursor-pointer min-w-0 shrink"
                         aria-label={t("terminal.serverStats.network")}
                       >
-                        <ArrowDownToLine size={9} className="flex-shrink-0 text-emerald-400" />
+                        <ArrowDownToLine size={9} className="flex-shrink-0 text-emerald-400 terminal-topbar-icon" />
                         <span className="truncate">{formatNetSpeed(serverStats.netRxSpeed)}</span>
-                        <ArrowUpFromLine size={9} className="flex-shrink-0 text-sky-400" />
+                        <ArrowUpFromLine size={9} className="flex-shrink-0 text-sky-400 terminal-topbar-icon" />
                         <span className="truncate">{formatNetSpeed(serverStats.netTxSpeed)}</span>
-                        <Activity size={9} className="flex-shrink-0 text-violet-400" />
+                        <Activity size={9} className="flex-shrink-0 text-violet-400 terminal-topbar-icon" />
                         <span className="truncate">{formatLatency(serverStats.latencyMs)}</span>
                       </button>
                     </HoverCardTrigger>
