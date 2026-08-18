@@ -174,6 +174,14 @@ export default [
     },
   },
   {
+    // Root build config runs under Node but only matches the base JS rules
+    // (no ts/tsx globals); its `process.env` publish overrides need the global.
+    files: ["electron-builder.config.cjs"],
+    languageOptions: {
+      globals: { process: "readonly" },
+    },
+  },
+  {
     // Electron main-process bridges are CommonJS and were historically excluded
     // from linting. Lint them for undefined references only — the cheap,
     // high-value guard against e.g. a removed variable still referenced
