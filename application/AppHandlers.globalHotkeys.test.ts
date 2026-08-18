@@ -443,3 +443,98 @@ test('connection log host snapshot includes custom host icon fields', () => {
     },
   );
 });
+
+test('side panel cycling actions dispatch the direction through the ref', () => {
+  const noop = () => {};
+  const directions: string[] = [];
+  const baseCtx = {
+    IS_DEV: false,
+    MOVE_FOCUS_DEBOUNCE_MS: 0,
+    activeTabStore: { getActiveTabId: () => 'vault' },
+    addConnectionLogRef: { current: noop },
+    closeSession: noop,
+    closeTabInFlightRef: { current: false },
+    closeWorkspace: noop,
+    collectSessionIds: () => [],
+    confirmIfBusyLocalTerminal: async () => true,
+    createLocalTerminalWithCurrentShell: noop,
+    cycleSidePanelToolRef: { current: (direction: 'next' | 'prev') => { directions.push(direction); } },
+    editorTabs: [],
+    fromEditorTabId: () => null,
+    handleOpenSettingsRef: { current: noop },
+    handleRequestCloseEditorTabRef: { current: noop },
+    isEditorTabId: () => false,
+    isQuickSwitcherOpen: false,
+    lastMoveFocusTimeRef: { current: 0 },
+    moveFocusInWorkspace: noop,
+    orderedTabs: [],
+    resolveCloseIntent: () => ({ kind: 'noop' }),
+    resolveSnippetsShortcutIntent: () => ({ kind: 'noop' }),
+    sessions: [],
+    setActiveTabId: noop,
+    setAddToWorkspaceDialog: noop,
+    setIsQuickSwitcherOpen: noop,
+    setNavigateToSection: noop,
+    settings: { showSftpTab: true, shellOnlyTabNumberShortcuts: false },
+    splitSessionWithCurrentShell: noop,
+    systemInfoRef: { current: { username: 'user', hostname: 'host' } },
+    toEditorTabId: (id: string) => `editor:${id}`,
+    toggleBroadcast: noop,
+    toggleScriptsSidePanelRef: { current: noop },
+    toggleSidePanelRef: { current: noop },
+    workspaces: [],
+  };
+
+  const event = {} as KeyboardEvent;
+
+  executeHotkeyActionImpl(() => baseCtx, 'sidePanelNextTool', event);
+  executeHotkeyActionImpl(() => baseCtx, 'sidePanelPrevTool', event);
+
+  assert.deepEqual(directions, ['next', 'prev']);
+});
+
+test('ctrl+alt+bracket keydowns match the cycling bindings globally', () => {
+  const handledActions: string[] = [];
+  const target = new FakeHTMLElement();
+  const makeEvent = (key: string, code: string) => ({
+    key,
+    code,
+    ctrlKey: true,
+    metaKey: false,
+    altKey: true,
+    shiftKey: false,
+    target,
+    composedPath: () => [target],
+    preventDefault: () => {},
+    stopPropagation: () => {},
+  } as unknown as KeyboardEvent);
+
+  handleGlobalHotkeyKeyDownImpl(
+    () => ({
+      HOTKEY_DEBUG: false,
+      closeTabKeyStr: 'Ctrl + W',
+      executeHotkeyAction: (action: string) => {
+        handledActions.push(action);
+      },
+      hotkeyScheme: 'pc',
+      keyBindings: DEFAULT_KEY_BINDINGS,
+      matchesKeyBinding,
+    }),
+    makeEvent(']', 'BracketRight'),
+  );
+  handleGlobalHotkeyKeyDownImpl(
+    () => ({
+      HOTKEY_DEBUG: false,
+      closeTabKeyStr: 'Ctrl + W',
+      executeHotkeyAction: (action: string) => {
+        handledActions.push(action);
+      },
+      hotkeyScheme: 'pc',
+      keyBindings: DEFAULT_KEY_BINDINGS,
+      matchesKeyBinding,
+    }),
+    makeEvent('[', 'BracketLeft'),
+  );
+
+  assert.deepEqual(handledActions, ['sidePanelNextTool', 'sidePanelPrevTool']);
+});

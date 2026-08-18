@@ -671,7 +671,7 @@ export async function closeTabsBatchImpl(getCtx: AppContextGetter, targetIds: st
 }
 
 export function executeHotkeyActionImpl(getCtx: AppContextGetter, action: string, e: KeyboardEvent) {
-  const { IS_DEV, MOVE_FOCUS_DEBOUNCE_MS, activeTabStore, addConnectionLogRef, closePluginViewTab, closeSession, closeTabInFlightRef, closeWorkspace, collectSessionIds, confirmIfBusyLocalTerminal, createLocalTerminalWithCurrentShell, editorTabs, fromEditorTabId, handleOpenSettingsRef, handleRequestCloseEditorTabRef, isEditorTabId, isPluginViewTabId, isQuickSwitcherOpen, lastMoveFocusTimeRef, moveFocusInWorkspace, orderedTabs, resolveCloseIntent, resolveSnippetsShortcutIntent, sessions, setActiveTabId, setAddToWorkspaceDialog, setIsQuickSwitcherOpen, setNavigateToSection, settings, splitSessionWithCurrentShell, systemInfoRef, toEditorTabId, toggleBroadcast, toggleScriptsSidePanelRef, toggleSidePanelRef, toggleWorkspaceViewMode, workspaces } = getCtx();
+  const { IS_DEV, MOVE_FOCUS_DEBOUNCE_MS, activeTabStore, addConnectionLogRef, closePluginViewTab, closeSession, closeTabInFlightRef, closeWorkspace, collectSessionIds, confirmIfBusyLocalTerminal, createLocalTerminalWithCurrentShell, editorTabs, fromEditorTabId, handleOpenSettingsRef, handleRequestCloseEditorTabRef, isEditorTabId, isPluginViewTabId, isQuickSwitcherOpen, lastMoveFocusTimeRef, moveFocusInWorkspace, orderedTabs, resolveCloseIntent, resolveSnippetsShortcutIntent, sessions, setActiveTabId, setAddToWorkspaceDialog, setIsQuickSwitcherOpen, setNavigateToSection, settings, splitSessionWithCurrentShell, systemInfoRef, toEditorTabId, toggleBroadcast, cycleSidePanelToolRef, toggleScriptsSidePanelRef, toggleSidePanelRef, toggleWorkspaceViewMode, workspaces } = getCtx();
 {
     const shortcutTabs = buildNumberShortcutTabTargets({
       showSftpTab: settings.showSftpTab ?? true,
@@ -863,6 +863,12 @@ export function executeHotkeyActionImpl(getCtx: AppContextGetter, action: string
         break;
       case 'toggleSidePanel':
         toggleSidePanelRef.current?.();
+        break;
+      case 'sidePanelNextTool':
+        cycleSidePanelToolRef.current?.('next');
+        break;
+      case 'sidePanelPrevTool':
+        cycleSidePanelToolRef.current?.('prev');
         break;
       case 'broadcast': {
         // Toggle broadcast mode for the active workspace
