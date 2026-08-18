@@ -84,6 +84,7 @@ import { useAvailableFonts } from "../application/state/fontStore";
 import { composeFontFamilyStack, type SupportedPlatform } from "../infrastructure/config/cjkFonts";
 import { resolveTerminalFontFamilyId } from "../infrastructure/config/fonts";
 import { getBuiltinTerminalThemeById } from "../infrastructure/config/terminalThemes";
+import { neutralTerminalSurfaceColors } from "../infrastructure/theme/terminalAppearanceTokens";
 import {
   STORAGE_KEY_TERMINAL_COMPOSE_BAR_OPEN,
   STORAGE_KEY_TERMINAL_ENCODING_BY_HOST_PREFIX,
@@ -3878,16 +3879,20 @@ const TerminalComponent: React.FC<TerminalProps> = ({
   ]);
 
   const terminalPreviewVars = useMemo(() => {
-    const { background, foreground, cursor } = effectiveTheme.colors;
+    const { background } = effectiveTheme.colors;
+    // Host info bar, server stats, and toolbar chrome read these vars; they
+    // must not replay a saturated terminal foreground/cursor. Low-saturation
+    // themes pass through unchanged.
+    const surface = neutralTerminalSurfaceColors(effectiveTheme);
     return {
       ['--terminal-ui-bg' as never]: background,
-      ['--terminal-ui-fg' as never]: foreground,
-      ['--terminal-ui-border' as never]: `color-mix(in srgb, ${foreground} 8%, ${background} 92%)`,
-      ['--terminal-ui-toolbar-btn' as never]: `color-mix(in srgb, ${background} 88%, ${foreground} 12%)`,
-      ['--terminal-ui-toolbar-btn-hover' as never]: `color-mix(in srgb, ${background} 78%, ${foreground} 22%)`,
-      ['--terminal-ui-toolbar-btn-active' as never]: `color-mix(in srgb, ${cursor} 78%, ${background} 22%)`,
+      ['--terminal-ui-fg' as never]: surface.fg,
+      ['--terminal-ui-border' as never]: `color-mix(in srgb, ${surface.fg} 8%, ${background} 92%)`,
+      ['--terminal-ui-toolbar-btn' as never]: `color-mix(in srgb, ${background} 88%, ${surface.fg} 12%)`,
+      ['--terminal-ui-toolbar-btn-hover' as never]: `color-mix(in srgb, ${background} 78%, ${surface.fg} 22%)`,
+      ['--terminal-ui-toolbar-btn-active' as never]: `color-mix(in srgb, ${surface.cursor} 78%, ${background} 22%)`,
     };
-  }, [effectiveTheme.colors]);
+  }, [effectiveTheme]);
 
   const effectiveComposeBarOpen = inWorkspace ? !!isWorkspaceComposeBarOpen : isComposeBarOpen;
 

@@ -4,7 +4,7 @@ import {
   neutralChromeForegroundHex,
 } from '../../domain/colorContrast';
 
-const neutralTerminalSurfaceColors = (
+export const neutralTerminalSurfaceColors = (
   theme: TerminalTheme,
 ): { fg: string; cursor: string } => ({
   // Surfaces around the terminal (host tree, side panels, toolbar, tabs)
