@@ -61,7 +61,10 @@ jobs:
             if ! git merge-base --is-ancestor "${UPSTREAM_TAG}" HEAD; then
               git merge "${UPSTREAM_TAG}" -m "chore: include upstream release ${UPSTREAM_TAG}"
             fi
-            git tag "${UPSTREAM_TAG}" HEAD
+            # The upstream tag fetch above already created this tag name
+            # locally at the upstream commit; move it onto the merge HEAD so
+            # the fork tag covers upstream plus local patches.
+            git tag -f "${UPSTREAM_TAG}" HEAD
             git push origin main
             git push origin "refs/tags/${UPSTREAM_TAG}"
           else
