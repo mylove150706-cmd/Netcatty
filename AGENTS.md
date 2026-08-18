@@ -1,6 +1,21 @@
 # Agents Overview
 
-This project is wired around three layers: domain (pure logic), application state (React hooks orchestrating the domain), and UI (components). Use this document as a quick guide for extending or reusing the codebase.
+Netcatty is an AI-powered SSH client, SFTP browser, and terminal manager (Electron main process in `electron/*.cjs` + React 19/Vite/Tailwind 4 renderer). Requires Node.js >= 22. This document is a quick guide for extending or reusing the codebase.
+
+## Commands
+
+| Task | Command | Notes |
+|------|---------|-------|
+| Dev (Vite + Electron) | `npm run dev` | Runs lint first, fetches mosh/ET binaries, then starts Vite + Electron together. |
+| Production build | `npm run build` | Includes plugin workspace builds and plugin-contract generation. |
+| Lint | `npm run lint` (or `lint:fix`) | ESLint over the whole repo; `lint` + `test` are the pre-PR gates. |
+| Tests | `npm test` | `node --test` + tsx over explicit globs; `pretest` builds plugin deps and checks the codebuddy SDK contract. New test files must match a glob in the `test` script. |
+| Focused suites | `npm run test:plugin-runtime[:electron]`, `test:sync-crdt`, `test:ssh-mfa-models`, `test:xterm-*` | See `package.json` for the full list. |
+| Packaging | `npm run pack:dir` / `pack:win` / `pack:mac` / `pack:linux` | electron-builder; `pack:dir` is the fast local verification build. |
+| Capability codegen | `npm run generate:capability-tools` | Run after changing `electron/capabilities/catalog/`; commit the generated JSON (CI verifies drift). |
+| Codex contract | `npm run generate:codex-app-server-schema` / `check:codex-app-server-schema` | See the Codex App Server section below. |
+
+There is no dedicated typecheck script (tsconfig is `noEmit`); CI relies on lint + tests. Import alias `@/*` maps to the repo root. `postinstall` runs patch-package and rebuilds native deps (node-pty), so use `npm ci` on fresh clones. Commits follow Conventional Commits (`feat:`, `fix:`, `docs:`, `refactor:`, `chore:`).
 
 ## Current Agents (Roles)
 - **Domain** (`domain/`): Models and pure helpers. Examples:
