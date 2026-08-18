@@ -66,3 +66,17 @@ export const resolveReadableForegroundForHsl = (
   const whiteContrast = getContrastRatio(1, backgroundLuminance);
   return whiteContrast >= blackContrast ? WHITE_HSL : BLACK_HSL;
 };
+
+/**
+ * Chrome surfaces (top tabs, settings text) must stay neutral and readable
+ * even when the terminal theme replays a saturated foreground color
+ * (e.g. an all-green terminal).
+ */
+export const neutralChromeForegroundToken = (value: string, isDark: boolean): string => {
+  const parsed = parseHslToken(value);
+  if (!parsed) return value;
+  const min = isDark ? 85 : 10;
+  const max = isDark ? 95 : 22;
+  const lightness = Math.round(Math.min(max, Math.max(min, parsed.lightness * 100)) * 10) / 10;
+  return `0 0% ${lightness}%`;
+};
