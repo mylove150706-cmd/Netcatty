@@ -7,8 +7,7 @@
 // Priority:
 //   1. ET_BIN_RELEASE from workflow input / repository variable.
 //   2. Latest non-draft, non-prerelease GitHub Release whose tag is
-//      et-bin-* in ET_BIN_OWNER/ET_BIN_REPO. By default this is a
-//      dedicated sibling binary repository named Netcatty-et-bin.
+//      et-bin-* in ET_BIN_OWNER/ET_BIN_REPO (default binaricat/Netcatty-et-bin).
 //
 // In GitHub Actions, the resolved tag is written back to $GITHUB_ENV so
 // later steps can run scripts/fetch-et-binaries.cjs without duplicating
@@ -32,7 +31,10 @@ function validateReleaseTag(tag) {
 }
 
 function parseRepository(env) {
-  const owner = env.ET_BIN_OWNER || (env.GITHUB_REPOSITORY || "").split("/")[0] || "binaricat";
+  // Canonical default is always binaricat/Netcatty-et-bin. Do not derive owner
+  // from GITHUB_REPOSITORY — fork packaging would otherwise look for
+  // <fork-owner>/Netcatty-et-bin and fail. Override only via ET_BIN_OWNER/REPO.
+  const owner = env.ET_BIN_OWNER || "binaricat";
   const repo = env.ET_BIN_REPO || "Netcatty-et-bin";
   return { owner, repo };
 }
