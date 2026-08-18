@@ -898,6 +898,7 @@ export function AppSideEffects() {
 
   const toggleScriptsSidePanelRef = useRef<(() => void) | null>(null);
   const toggleSidePanelRef = useRef<(() => void) | null>(null);
+  const cycleSidePanelToolRef = useRef<((direction: 'next' | 'prev') => void) | null>(null);
   const openNoteRequestIdRef = useRef(0);
   const [openNoteRequest, setOpenNoteRequest] = useState<{
     tabId: string;
@@ -1045,6 +1046,7 @@ export function AppSideEffects() {
       toEditorTabId,
       toggleBroadcast,
       toggleScriptsSidePanelRef,
+      cycleSidePanelToolRef,
       toggleSidePanelRef,
       toggleWorkspaceViewMode,
       workspaces: workspacesRefForHotkeys.current,
@@ -1766,6 +1768,7 @@ export function AppSideEffects() {
       runSnippet: handleRunSnippet,
       splitSessionWithCurrentShell,
       toggleScriptsSidePanelRef,
+      cycleSidePanelToolRef,
       toggleSidePanelRef,
       // Chrome glue
       handleEndSessionDrag,

@@ -275,7 +275,7 @@ function AppViewInner({ domains }: AppViewProps) {
     setWorkspaceFocusedSession, sftpAutoOpenSidebar, sftpFollowTerminalCwd, setSftpFollowTerminalCwd, sftpAutoSync, sftpDefaultViewMode, sftpDoubleClickBehavior,
     sftpShowHiddenFiles, sftpUseCompressedUpload, snippetPackages, snippets, splitSessionWithCurrentShell, startSessionRename,
     startWorkspaceRename, submitSessionRename, submitWorkspaceRename, t, terminalFontFamilyId, terminalFontSize, terminalSettings, terminalThemeId, themeById,
-    toggleBroadcast, toggleScriptsSidePanelRef, toggleSidePanelRef, toggleWorkspaceViewMode, unmanageSource,
+    toggleBroadcast, toggleScriptsSidePanelRef, cycleSidePanelToolRef, toggleSidePanelRef, toggleWorkspaceViewMode, unmanageSource,
     readPersistedHosts, readPersistedManagedSources, updateCustomGroups, updateGroupConfigs, updateHostDistro, updateHosts, updateIdentities, updateKeys, updateKnownHosts, updateManagedSources,
     updateProxyProfiles, updateSnippetPackages, updateSnippets, updateSplitSizes, updateTerminalSetting, vaultFocusRequest, workspaceRenameTarget, workspaces,
     VaultViewContainer, SftpViewMount, TerminalLayerMount, LogViewWrapper,
@@ -727,6 +727,7 @@ function AppViewInner({ domains }: AppViewProps) {
           showHostTreeSidebar={showHostTreeSidebar}
           toggleScriptsSidePanelRef={toggleScriptsSidePanelRef}
           toggleSidePanelRef={toggleSidePanelRef}
+          cycleSidePanelToolRef={cycleSidePanelToolRef}
           onStartSessionRename={startSessionRename}
           onSubmitSessionRename={submitSessionRename}
           onRemoveSessionFromWorkspace={removeSessionFromWorkspace}
