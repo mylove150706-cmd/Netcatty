@@ -36,4 +36,12 @@ test('default binding ids, actions, and key strings do not collide', () => {
       }
     }
   }
+  // The per-category scan allows intentional terminal/SFTP context-scoped key
+  // sharing, so guard globally that the cycling keys are not reused anywhere.
+  for (const key of ['Ctrl + Alt + ]', 'Ctrl + Alt + [']) {
+    assert.equal(DEFAULT_KEY_BINDINGS.filter((b) => b.pc === key).length, 1, `expected exactly one pc binding for ${key}`);
+  }
+  for (const key of ['⌘ + ⌥ + ]', '⌘ + ⌥ + [']) {
+    assert.equal(DEFAULT_KEY_BINDINGS.filter((b) => b.mac === key).length, 1, `expected exactly one mac binding for ${key}`);
+  }
 });
