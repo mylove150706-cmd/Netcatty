@@ -67,17 +67,22 @@ export const resolveReadableForegroundForHsl = (
   return whiteContrast >= blackContrast ? WHITE_HSL : BLACK_HSL;
 };
 
+const NEUTRAL_SATURATION_THRESHOLD = 15;
+
+const clampLightness = (lightness: number, min: number, max: number): number =>
+  Math.round(Math.min(max, Math.max(min, lightness * 100)) * 10) / 10;
+
 /**
  * Chrome surfaces (top tabs, settings text) must stay neutral and readable
  * even when the terminal theme replays a saturated foreground color
- * (e.g. an all-green terminal).
+ * (e.g. an all-green terminal). Low-saturation colors pass through unchanged
+ * so ordinary themes keep their exact palette.
  */
 export const neutralChromeForegroundToken = (value: string, isDark: boolean): string => {
   const parsed = parseHslToken(value);
   if (!parsed) return value;
-  const min = isDark ? 85 : 10;
-  const max = isDark ? 95 : 22;
-  const lightness = Math.round(Math.min(max, Math.max(min, parsed.lightness * 100)) * 10) / 10;
+  if (parsed.saturation * 100 <= NEUTRAL_SATURATION_THRESHOLD) return value;
+  const lightness = clampLightness(parsed.lightness, isDark ? 85 : 10, isDark ? 95 : 22);
   return `0 0% ${lightness}%`;
 };
 
@@ -89,8 +94,49 @@ export const neutralChromeForegroundToken = (value: string, isDark: boolean): st
 export const neutralChromeAccentToken = (value: string, isDark: boolean): string => {
   const parsed = parseHslToken(value);
   if (!parsed) return value;
-  const min = isDark ? 78 : 20;
-  const max = isDark ? 90 : 35;
-  const lightness = Math.round(Math.min(max, Math.max(min, parsed.lightness * 100)) * 10) / 10;
+  if (parsed.saturation * 100 <= NEUTRAL_SATURATION_THRESHOLD) return value;
+  const lightness = clampLightness(parsed.lightness, isDark ? 78 : 20, isDark ? 90 : 35);
   return `0 0% ${lightness}%`;
 };
+
+const parseHexToRgb = (value: string): { red: number; green: number; blue: number } | null => {
+  const normalized = value.trim().replace(/^#/, '');
+  const expanded = normalized.length === 3
+    ? normalized.split('').map((part) => `${part}${part}`).join('')
+    : normalized;
+  if (!/^[0-9a-f]{6}$/i.test(expanded)) return null;
+  return {
+    red: Number.parseInt(expanded.slice(0, 2), 16),
+    green: Number.parseInt(expanded.slice(2, 4), 16),
+    blue: Number.parseInt(expanded.slice(4, 6), 16),
+  };
+};
+
+const neutralHexLightness = (
+  hex: string,
+  isDark: boolean,
+  min: number,
+  max: number,
+): string | null => {
+  const rgb = parseHexToRgb(hex);
+  if (!rgb) return null;
+  const maxChannel = Math.max(rgb.red, rgb.green, rgb.blue) / 255;
+  const minChannel = Math.min(rgb.red, rgb.green, rgb.blue) / 255;
+  const lightness = (maxChannel + minChannel) / 2;
+  const delta = maxChannel - minChannel;
+  const saturation = delta === 0
+    ? 0
+    : delta / (1 - Math.abs(2 * lightness - 1));
+  if (saturation * 100 <= NEUTRAL_SATURATION_THRESHOLD) return null;
+  const gray = Math.round((clampLightness(lightness, min, max) / 100) * 255);
+  const channel = gray.toString(16).padStart(2, '0');
+  return `#${channel}${channel}${channel}`;
+};
+
+export const neutralChromeForegroundHex = (hex: string, isDark: boolean): string => (
+  neutralHexLightness(hex, isDark, isDark ? 85 : 10, isDark ? 95 : 22) ?? hex
+);
+
+export const neutralChromeAccentHex = (hex: string, isDark: boolean): string => (
+  neutralHexLightness(hex, isDark, isDark ? 78 : 20, isDark ? 90 : 35) ?? hex
+);

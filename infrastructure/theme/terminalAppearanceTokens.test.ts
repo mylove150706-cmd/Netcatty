@@ -4,6 +4,7 @@ import assert from 'node:assert/strict';
 import { getContrastRatio, getHslTokenRelativeLuminance } from '../../domain/colorContrast';
 import { TERMINAL_THEMES } from '../config/terminalThemes';
 import {
+  buildHostTreeThemeFromTerminalTheme,
   buildSidePanelChromeThemeFromTerminalTheme,
   buildTerminalAppearanceCssVars,
   buildTerminalSidePanelCssVars,
@@ -75,8 +76,47 @@ test('buildSidePanelChromeThemeFromTerminalTheme uses resolved terminal colors',
 
   assert.equal(theme.termBg, '#f7f7f7');
   assert.equal(theme.termFg, '#100f0f');
-  assert.equal(theme.accent, '#24837b');
+  // #24837b is a saturated cursor: the accent must be neutralized to gray.
+  assert.match(theme.accent, /^#([0-9a-f]{2})\1\1$/i);
   assert.match(theme.separator, /^color-mix\(/);
+});
+
+test('saturated terminal themes render neutral chrome surface tokens', () => {
+  const greenTheme: Parameters<typeof buildTerminalAppearanceCssVars>[0] = {
+    id: 'all-green',
+    name: 'All green',
+    type: 'dark',
+    colors: {
+      background: '#141729',
+      foreground: '#21b568',
+      cursor: '#21b568',
+      selection: '#18463c',
+      black: '#21b568',
+      red: '#21b568',
+      green: '#21b568',
+      yellow: '#21b568',
+      blue: '#21b568',
+      magenta: '#21b568',
+      cyan: '#21b568',
+      white: '#21b568',
+      brightBlack: '#21b568',
+      brightRed: '#21b568',
+      brightGreen: '#21b568',
+      brightYellow: '#21b568',
+      brightBlue: '#21b568',
+      brightMagenta: '#21b568',
+      brightCyan: '#21b568',
+      brightWhite: '#21b568',
+    },
+  };
+
+  const vars = buildTerminalAppearanceCssVars(greenTheme);
+  assert.equal(vars['--nc-term-bg'], '#141729');
+  assert.match(vars['--nc-term-fg'], /^#([0-9a-f]{2})\1\1$/i);
+  assert.match(vars['--nc-term-cursor'], /^#([0-9a-f]{2})\1\1$/i);
+
+  const hostTree = buildHostTreeThemeFromTerminalTheme(greenTheme);
+  assert.match(hostTree.termFg, /^#([0-9a-f]{2})\1\1$/i);
 });
 
 test('terminal side panel variables follow the terminal palette with readable selected text', () => {

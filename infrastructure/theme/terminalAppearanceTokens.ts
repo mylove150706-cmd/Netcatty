@@ -1,4 +1,18 @@
 import type { TerminalTheme } from '../../domain/models';
+import {
+  neutralChromeAccentHex,
+  neutralChromeForegroundHex,
+} from '../../domain/colorContrast';
+
+const neutralTerminalSurfaceColors = (
+  theme: TerminalTheme,
+): { fg: string; cursor: string } => ({
+  // Surfaces around the terminal (host tree, side panels, toolbar, tabs)
+  // must not replay a saturated terminal foreground/cursor; neutralize the
+  // hue before deriving surface tokens. Low-saturation themes pass through.
+  fg: neutralChromeForegroundHex(theme.colors.foreground, theme.type === 'dark'),
+  cursor: neutralChromeAccentHex(theme.colors.cursor, theme.type === 'dark'),
+});
 
 export const TERMINAL_APPEARANCE_VAR_KEYS = [
   '--nc-term-bg',
@@ -173,10 +187,11 @@ export type TerminalSidePanelCssVars = Record<
 >;
 
 export function buildTerminalSidePanelCssVars(theme: TerminalTheme): TerminalSidePanelCssVars {
+  const neutral = neutralTerminalSurfaceColors(theme);
   const backgroundRgb = parseHexColor(theme.colors.background) ?? BLACK_RGB;
-  const preferredForegroundRgb = parseHexColor(theme.colors.foreground) ?? WHITE_RGB;
+  const preferredForegroundRgb = parseHexColor(neutral.fg) ?? WHITE_RGB;
   const foregroundRgb = readableForegroundRgb(backgroundRgb, preferredForegroundRgb);
-  const preferredCursorRgb = parseHexColor(theme.colors.cursor) ?? foregroundRgb;
+  const preferredCursorRgb = parseHexColor(neutral.cursor) ?? foregroundRgb;
   const preferredRedRgb = parseHexColor(theme.colors.red) ?? { red: 220, green: 38, blue: 38 };
   const cursorRgb = ensureReadableRgb(preferredCursorRgb, [backgroundRgb], [foregroundRgb, BLACK_RGB, WHITE_RGB]);
   const redRgb = ensureReadableRgb(preferredRedRgb, [backgroundRgb], [foregroundRgb, BLACK_RGB, WHITE_RGB]);
@@ -238,9 +253,10 @@ export function buildTerminalSidePanelCssVars(theme: TerminalTheme): TerminalSid
 }
 
 export function buildTerminalAppearanceCssVars(theme: TerminalTheme): TerminalAppearanceCssVars {
+  const neutral = neutralTerminalSurfaceColors(theme);
   const bg = theme.colors.background;
-  const fg = theme.colors.foreground;
-  const cursor = theme.colors.cursor;
+  const fg = neutral.fg;
+  const cursor = neutral.cursor;
   const muted = mix(fg, bg, 58);
   const hover = mix(fg, bg, 12);
   const active = mix(fg, bg, 16);
@@ -312,20 +328,22 @@ export type SidePanelChromeTheme = {
 };
 
 export function buildSidePanelChromeThemeFromTerminalTheme(theme: TerminalTheme): SidePanelChromeTheme {
+  const neutral = neutralTerminalSurfaceColors(theme);
   const bg = theme.colors.background;
-  const fg = theme.colors.foreground;
+  const fg = neutral.fg;
   return {
     termBg: bg,
     termFg: fg,
     mutedFg: mix(fg, bg, 58),
     separator: mix(fg, bg, 12),
-    accent: theme.colors.cursor,
+    accent: neutral.cursor,
   };
 }
 
 export function buildHostTreeThemeFromTerminalTheme(theme: TerminalTheme): HostTreeThemeColors {
+  const neutral = neutralTerminalSurfaceColors(theme);
   const bg = theme.colors.background;
-  const fg = theme.colors.foreground;
+  const fg = neutral.fg;
   return {
     termBg: bg,
     termFg: fg,
