@@ -196,7 +196,7 @@ export const TerminalToolbar: React.FC<TerminalToolbarProps> = ({
   const [overflowOpen, setOverflowOpen] = useState(false);
   const [encodingSubmenuOpen, setEncodingSubmenuOpen] = useState(false);
   const buttonBase =
-    'h-6 w-6 p-0 shadow-none border-none text-[color:var(--terminal-toolbar-fg)] bg-transparent hover:bg-transparent';
+    'h-[length:var(--terminal-topbar-btn-h,1.5rem)] w-[length:var(--terminal-topbar-btn-h,1.5rem)] p-0 shadow-none border-none text-[color:var(--terminal-toolbar-fg)] bg-transparent hover:bg-transparent';
 
   const isLocalTerminal = host?.protocol === 'local' || host?.id?.startsWith('local-');
   const isSerialTerminal = host?.protocol === 'serial' || host?.id?.startsWith('serial-');
@@ -343,7 +343,7 @@ export const TerminalToolbar: React.FC<TerminalToolbarProps> = ({
               onClick={onToggleComposeBar}
               style={isComposeBarOpen ? activeButtonStyle : undefined}
             >
-              <TextCursorInput size={12} />
+              <TextCursorInput size={12} className="terminal-topbar-icon-lg" />
             </Button>
           </TooltipTrigger>
           <TooltipContent side="bottom">{t('terminal.toolbar.composeBar')}</TooltipContent>
@@ -360,7 +360,7 @@ export const TerminalToolbar: React.FC<TerminalToolbarProps> = ({
               onClick={onToggleSearch}
               style={isSearchOpen ? activeButtonStyle : undefined}
             >
-              <Search size={12} />
+              <Search size={12} className="terminal-topbar-icon-lg" />
             </Button>
           </TooltipTrigger>
           <TooltipContent side="bottom">{t('terminal.toolbar.searchTerminal')}</TooltipContent>
@@ -378,7 +378,7 @@ export const TerminalToolbar: React.FC<TerminalToolbarProps> = ({
                   aria-pressed={scriptsPopoverOpen}
                   style={scriptsPopoverOpen ? activeButtonStyle : undefined}
                 >
-                  <Zap size={12} />
+                  <Zap size={12} className="terminal-topbar-icon-lg" />
                 </Button>
               </PopoverTrigger>
             </TooltipTrigger>
@@ -507,7 +507,7 @@ export const TerminalToolbar: React.FC<TerminalToolbarProps> = ({
                 onClick={onOpenSFTP}
                 disabled={status !== 'connected'}
               >
-                <FolderInput size={12} />
+                <FolderInput size={12} className="terminal-topbar-icon-lg" />
               </Button>
             </TooltipTrigger>
             <TooltipContent side="bottom">
@@ -531,7 +531,7 @@ export const TerminalToolbar: React.FC<TerminalToolbarProps> = ({
                 onClick={onSendYmodem}
                 disabled={status !== 'connected' || !onSendYmodem}
               >
-                <Upload size={12} />
+                <Upload size={12} className="terminal-topbar-icon-lg" />
               </Button>
             </TooltipTrigger>
             <TooltipContent side="bottom">
@@ -557,7 +557,7 @@ export const TerminalToolbar: React.FC<TerminalToolbarProps> = ({
                 onClick={onReceiveYmodem}
                 disabled={status !== 'connected' || !onReceiveYmodem}
               >
-                <Download size={12} />
+                <Download size={12} className="terminal-topbar-icon-lg" />
               </Button>
             </TooltipTrigger>
             <TooltipContent side="bottom">
@@ -581,7 +581,7 @@ export const TerminalToolbar: React.FC<TerminalToolbarProps> = ({
                 onClick={onToggleComposeBar}
                 style={isComposeBarOpen ? activeButtonStyle : undefined}
               >
-                <TextCursorInput size={12} />
+                <TextCursorInput size={12} className="terminal-topbar-icon-lg" />
               </Button>
             </TooltipTrigger>
             <TooltipContent side="bottom">{t('terminal.toolbar.composeBar')}</TooltipContent>
@@ -601,7 +601,7 @@ export const TerminalToolbar: React.FC<TerminalToolbarProps> = ({
                 onClick={onToggleSearch}
                 style={isSearchOpen ? activeButtonStyle : undefined}
               >
-                <Search size={12} />
+                <Search size={12} className="terminal-topbar-icon-lg" />
               </Button>
             </TooltipTrigger>
             <TooltipContent side="bottom">{t('terminal.toolbar.searchTerminal')}</TooltipContent>
@@ -626,7 +626,7 @@ export const TerminalToolbar: React.FC<TerminalToolbarProps> = ({
                 disabled={isSessionLogDisabled || !onToggleSessionLog}
                 style={isSessionLogging ? activeButtonStyle : undefined}
               >
-                <FileText size={12} />
+                <FileText size={12} className="terminal-topbar-icon-lg" />
               </Button>
             </TooltipTrigger>
             <TooltipContent side="bottom">
@@ -648,7 +648,7 @@ export const TerminalToolbar: React.FC<TerminalToolbarProps> = ({
                 aria-label={t('terminal.toolbar.scripts')}
                 onClick={onOpenScripts}
               >
-                <Zap size={12} />
+                <Zap size={12} className="terminal-topbar-icon-lg" />
               </Button>
             </TooltipTrigger>
             <TooltipContent side="bottom">{t('terminal.toolbar.scripts')}</TooltipContent>
@@ -671,7 +671,7 @@ export const TerminalToolbar: React.FC<TerminalToolbarProps> = ({
                 disabled={status !== 'connected'}
                 onClick={onOpenHistory}
               >
-                <History size={12} />
+                <History size={12} className="terminal-topbar-icon-lg" />
               </Button>
             </TooltipTrigger>
             <TooltipContent side="bottom">
@@ -698,7 +698,7 @@ export const TerminalToolbar: React.FC<TerminalToolbarProps> = ({
                 disabled={status !== 'connected'}
                 onClick={onConfigureOsc7}
               >
-                <FolderSync size={12} />
+                <FolderSync size={12} className="terminal-topbar-icon-lg" />
               </Button>
             </TooltipTrigger>
             <TooltipContent side="bottom">
@@ -720,7 +720,7 @@ export const TerminalToolbar: React.FC<TerminalToolbarProps> = ({
                 aria-label={t('terminal.toolbar.terminalSettings')}
                 onClick={onOpenTheme}
               >
-                <Palette size={12} />
+                <Palette size={12} className="terminal-topbar-icon-lg" />
               </Button>
             </TooltipTrigger>
             <TooltipContent side="bottom">{t('terminal.toolbar.terminalSettings')}</TooltipContent>
@@ -739,7 +739,7 @@ export const TerminalToolbar: React.FC<TerminalToolbarProps> = ({
                 aria-label={t('scripts.recording.start')}
                 onClick={onStartRecording}
               >
-                <Circle size={12} className="text-red-500" />
+                <Circle size={12} className="terminal-topbar-icon-lg text-red-500" />
               </Button>
             </TooltipTrigger>
             <TooltipContent side="bottom">{t('scripts.recording.start')}</TooltipContent>
@@ -758,7 +758,7 @@ export const TerminalToolbar: React.FC<TerminalToolbarProps> = ({
                     className={buttonBase}
                     aria-label={t('terminal.toolbar.encoding')}
                   >
-                    <Languages size={12} />
+                    <Languages size={12} className="terminal-topbar-icon-lg" />
                   </Button>
                 </PopoverTrigger>
               </TooltipTrigger>

@@ -95,6 +95,15 @@ test("localized settings include terminal font weight option labels", () => {
   }
 });
 
+test("localized settings include host info bar height labels", () => {
+  const keys = ["settings.terminal.hostInfoBar.height"];
+
+  for (const locale of LOCALIZED_SETTINGS_LOCALES) {
+    const missing = keys.filter((key) => !locale.messages[key]);
+    assert.deepEqual(missing, [], `${locale.name} is missing host info bar height labels`);
+  }
+});
+
 test("localized vault messages include host icon labels", () => {
   const keys = [
     "hostDetails.icon.title",

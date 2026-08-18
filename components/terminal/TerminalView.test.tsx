@@ -297,6 +297,17 @@ test("resolveTerminalTopOffsets scales with hostInfoBarHeight", () => {
   );
 });
 
+test("resolveTerminalTopOffsets scales the search-open offset with hostInfoBarHeight", () => {
+  assert.deepEqual(
+    resolveTerminalTopOffsets({ showHostInfoBar: true, isSearchOpen: true, hostInfoBarHeight: 40 }),
+    { toolbarOffset: 76, contentTop: "80px" },
+  );
+  assert.deepEqual(
+    resolveTerminalTopOffsets({ showHostInfoBar: true, isSearchOpen: true, hostInfoBarHeight: 28 }),
+    { toolbarOffset: 64, contentTop: "68px" },
+  );
+});
+
 test("network device tip clears the compact speed-dial toggle only when it is present", () => {
   // Speed dial only renders when host info is hidden and search is closed;
   // reserve right-side room there so the tip cannot cover its click target.

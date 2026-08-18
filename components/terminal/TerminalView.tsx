@@ -267,7 +267,7 @@ export function resolveTerminalTopOffsets({
   networkDeviceTipHeight?: number;
   hostInfoBarHeight?: number;
 }): { toolbarOffset: number; contentTop: string } {
-  const toolbarOffset = isSearchOpen ? 64 : showHostInfoBar ? hostInfoBarHeight + 2 : 0;
+  const toolbarOffset = isSearchOpen ? hostInfoBarHeight + 36 : showHostInfoBar ? hostInfoBarHeight + 2 : 0;
   return {
     toolbarOffset,
     // The tip strip stacks directly below the toolbar, so the terminal
