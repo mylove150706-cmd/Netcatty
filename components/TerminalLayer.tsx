@@ -113,11 +113,16 @@ import {
   sidePanelLayoutHasTool,
   type SidePanelSplitDirection,
 } from '../domain/sidePanelLayout';
+import { cycleSidePanelTool, type SidePanelCycleDirection } from '../domain/sidePanelToolCycling';
 import { useTerminalSidePanelLayoutState } from '../application/state/useTerminalSidePanelLayoutState';
 import {
   TERMINAL_SIDE_PANEL_MAX_WIDTH,
   TERMINAL_SIDE_PANEL_MIN_WIDTH,
 } from '../application/state/terminalSidePanelWidth';
+import {
+  TERMINAL_SIDE_PANEL_TAB_DEFAULT_ORDER,
+  useTerminalSidePanelTabOrder,
+} from '../application/state/terminalSidePanelTabs';
 
 import {
   AIChatPanelsHost,
@@ -255,6 +260,7 @@ const TerminalLayerInner: React.FC<TerminalLayerProps> = ({
   sessionLogsTimestampsEnabled,
   sshDebugLogsEnabled,
   showHostTreeSidebar = true,
+  cycleSidePanelToolRef,
   toggleScriptsSidePanelRef,
   toggleSidePanelRef,
   // Session rename props
@@ -263,6 +269,9 @@ const TerminalLayerInner: React.FC<TerminalLayerProps> = ({
   onRemoveSessionFromWorkspace,
 }) => {
   const { t } = useI18n();
+  // Second layout-hook instance: syncs with the side panel customize UI via
+  // storage events so the cycling list always mirrors the rendered rail.
+  const { partition: partitionSidePanelTools } = useTerminalSidePanelTabOrder();
   // Side panel state must be initialized before any callbacks reference its
   // setters or refs in their dependency arrays.
   const {
@@ -1522,6 +1531,35 @@ const TerminalLayerInner: React.FC<TerminalLayerProps> = ({
     handleSwitchSidePanelTab('notes');
   }, [handleSwitchSidePanelTab, sidePanelOpenTabsRef]);
 
+  // Keyboard cycling over the tools the user placed as "show" in the rail.
+  // SFTP is skipped when no host is resolvable so cycling never stalls; the
+  // remembered panel keeps working like Ctrl+\ when the panel is closed.
+  const handleCycleSidePanelTool = useCallback((direction: SidePanelCycleDirection) => {
+    const tabId = activeTabIdRef.current;
+    if (!tabId) return;
+    const shown = partitionSidePanelTools(TERMINAL_SIDE_PANEL_TAB_DEFAULT_ORDER).shown as SidePanelTab[];
+    const cyclable = shown.filter((tool) => tool !== 'sftp' || !!resolveSftpHostForTab(tabId));
+    if (cyclable.length === 0) return;
+    const current = sidePanelOpenTabsRef.current.get(tabId)
+      ?? lastSidePanelTabRef.current.get(tabId)
+      ?? null;
+    const next = cycleSidePanelTool({ tools: cyclable, current, direction });
+    if (!next || next === current) return;
+    if (next === 'notes') {
+      handleOpenNotes();
+      return;
+    }
+    handleSwitchSidePanelTab(next);
+  }, [
+    activeTabIdRef,
+    handleOpenNotes,
+    handleSwitchSidePanelTab,
+    lastSidePanelTabRef,
+    partitionSidePanelTools,
+    resolveSftpHostForTab,
+    sidePanelOpenTabsRef,
+  ]);
+
   const handleBackFromNotes = useCallback(() => {
     const tabId = activeTabIdRef.current;
     if (!tabId) return;
@@ -2005,6 +2043,7 @@ const TerminalLayerInner: React.FC<TerminalLayerProps> = ({
     collectSessionIds,
     customAccent,
     customGroups,
+    cycleSidePanelToolRef,
     draggingSessionId,
     editorWordWrap,
     effectiveHosts,
@@ -2024,6 +2063,7 @@ const TerminalLayerInner: React.FC<TerminalLayerProps> = ({
     handleCloseSession,
     handleCloseSidePanel,
     handleCommandExecuted,
+    handleCycleSidePanelTool,
     handleHistoryDelete: onDeleteShellHistoryEntry,
     handleCommandSubmitted,
     handleComposeSend,
