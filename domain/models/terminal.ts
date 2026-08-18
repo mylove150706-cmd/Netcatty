@@ -146,6 +146,7 @@ export interface TerminalSettings {
   hostInfoBarTitleMode: HostInfoBarTitleMode;
   showServerStats: boolean; // Show CPU/Memory/Disk in terminal statusbar
   serverStatsRefreshInterval: number; // Seconds between stats refresh (default: 30)
+  hostInfoBarHeight: number; // Host info bar height in px (default 28, clamped 22-44)
 
   // System Manager side panel polling (seconds)
   systemManagerProcessRefreshInterval: number;
@@ -324,6 +325,15 @@ const normalizeKeywordHighlightRules = (
   return normalizedRules;
 };
 
+function normalizeHostInfoBarHeight(value: unknown): number {
+  const parsed = typeof value === 'number' ? value : Number(value);
+  if (!Number.isFinite(parsed)) return HOST_INFO_BAR_HEIGHT_DEFAULT;
+  return Math.min(
+    HOST_INFO_BAR_HEIGHT_MAX,
+    Math.max(HOST_INFO_BAR_HEIGHT_MIN, Math.round(parsed)),
+  );
+}
+
 const isMiddleClickBehavior = (value: unknown): value is MiddleClickBehavior => (
   value === 'context-menu' ||
   value === 'paste' ||
@@ -443,6 +453,7 @@ export const normalizeTerminalSettings = (
     inlineImageSequenceLimitMb: normalizeInlineImageSequenceLimitMb(
       mergedSettings.inlineImageSequenceLimitMb,
     ),
+    hostInfoBarHeight: normalizeHostInfoBarHeight(mergedSettings.hostInfoBarHeight),
     autocompleteGhostText: mergedSettings.autocompletePopupMenu
       ? false
       : mergedSettings.autocompleteGhostText,
@@ -454,6 +465,11 @@ export const normalizeTerminalSettings = (
 
 /** Default scrollback rows for new installs (VS Code uses 1000; we keep a modest headroom). */
 export const DEFAULT_TERMINAL_SCROLLBACK = 3000;
+
+/** Host info bar height bounds in pixels (inclusive). */
+export const HOST_INFO_BAR_HEIGHT_MIN = 22;
+export const HOST_INFO_BAR_HEIGHT_MAX = 44;
+export const HOST_INFO_BAR_HEIGHT_DEFAULT = 28;
 
 const DEFAULT_TERMINAL_SETTINGS: TerminalSettings = {
   scrollback: DEFAULT_TERMINAL_SCROLLBACK,
@@ -509,6 +525,7 @@ const DEFAULT_TERMINAL_SETTINGS: TerminalSettings = {
   hostInfoBarTitleMode: 'address', // Historical default: prefer user@host:port
   showServerStats: true, // Show server stats by default
   serverStatsRefreshInterval: 5, // Refresh every 5 seconds
+  hostInfoBarHeight: HOST_INFO_BAR_HEIGHT_DEFAULT,
   systemManagerProcessRefreshInterval: 3,
   systemManagerTmuxRefreshInterval: 3,
   systemManagerDockerListRefreshInterval: 5,
