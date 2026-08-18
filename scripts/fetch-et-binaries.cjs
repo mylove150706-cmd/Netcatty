@@ -16,7 +16,8 @@
 //   ET_BIN_RELEASE  — release tag in ${ET_BIN_OWNER}/${ET_BIN_REPO}.
 //                     Skip the whole step if unset (printed as a notice so
 //                     the build doesn't silently miss the bundling).
-//   ET_BIN_OWNER    — defaults to the GITHUB_REPOSITORY owner, or 'binaricat'
+//   ET_BIN_OWNER    — default 'binaricat' (never inherited from the fork
+//                     owner in GITHUB_REPOSITORY)
 //   ET_BIN_REPO     — default 'Netcatty-et-bin' (a dedicated binary
 //                     repository so the client repo stays source-only).
 //   ET_BIN_BASE_URL — full override (e.g. for staging / local mirror).
@@ -144,9 +145,10 @@ function chmodExecutable(filePath) {
 }
 
 function parseEtBinRepository(env) {
-  const githubOwner = (env.GITHUB_REPOSITORY || "").split("/")[0];
+  // Canonical default binaricat/Netcatty-et-bin — never inherit the fork
+  // owner from GITHUB_REPOSITORY (same policy as resolve-et-bin-release).
   return {
-    owner: env.ET_BIN_OWNER || githubOwner || "binaricat",
+    owner: env.ET_BIN_OWNER || "binaricat",
     repo: env.ET_BIN_REPO || "Netcatty-et-bin",
   };
 }
