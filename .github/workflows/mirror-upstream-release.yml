@@ -1,0 +1,72 @@
+name: Mirror upstream release
+
+# Watches binaricat/Netcatty releases. When upstream publishes a new stable
+# release, this workflow syncs main, mirrors the release tag, and dispatches
+# the build-packages workflow on that tag so the fork publishes its own
+# release (whose update feed points back at this fork).
+#
+# Tag pushes made with GITHUB_TOKEN do not trigger workflows, so the build is
+# started explicitly via workflow_dispatch (which is the documented exception
+# and does create a run).
+
+on:
+  schedule:
+    - cron: '20 */6 * * *' # every 6 hours
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: mirror-upstream-release
+  cancel-in-progress: false
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout fork main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Mirror latest upstream release and dispatch build
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          UPSTREAM_REPO: binaricat/Netcatty
+        run: |
+          set -euo pipefail
+          git config user.name "netcatty-sync-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git remote add upstream "https://github.com/${UPSTREAM_REPO}.git"
+
+          UPSTREAM_TAG="$(gh api "repos/${UPSTREAM_REPO}/releases/latest" --jq .tag_name)"
+          echo "Upstream latest release tag: ${UPSTREAM_TAG}"
+
+          if gh api "repos/${GITHUB_REPOSITORY}/releases/tags/${UPSTREAM_TAG}" >/dev/null 2>&1; then
+            echo "Release ${UPSTREAM_TAG} already exists on this fork; nothing to do."
+            exit 0
+          fi
+
+          if ! git ls-remote --exit-code origin "refs/tags/${UPSTREAM_TAG}" >/dev/null 2>&1; then
+            echo "Mirroring tag ${UPSTREAM_TAG} onto this fork."
+            git fetch upstream main
+            git fetch upstream "refs/tags/${UPSTREAM_TAG}:refs/tags/${UPSTREAM_TAG}"
+            if ! git merge --ff-only upstream/main; then
+              git merge upstream/main -m "chore: sync upstream ${UPSTREAM_REPO}"
+            fi
+            if ! git merge-base --is-ancestor "${UPSTREAM_TAG}" HEAD; then
+              git merge "${UPSTREAM_TAG}" -m "chore: include upstream release ${UPSTREAM_TAG}"
+            fi
+            git tag "${UPSTREAM_TAG}" HEAD
+            git push origin main
+            git push origin "refs/tags/${UPSTREAM_TAG}"
+          else
+            echo "Tag ${UPSTREAM_TAG} already exists on this fork; dispatching the build only."
+          fi
+
+          echo "Dispatching build-packages for ${UPSTREAM_TAG}."
+          gh workflow run build.yml --ref "${UPSTREAM_TAG}" -f publish_release=true

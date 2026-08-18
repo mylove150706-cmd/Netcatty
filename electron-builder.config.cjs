@@ -304,8 +304,10 @@ module.exports = {
     publish: [
         {
             provider: 'github',
-            owner: 'binaricat',
-            repo: 'Netcatty',
+            // Fork CI overrides the update feed via NETCATTY_UPDATE_FEED_* so
+            // fork-built apps update from the fork's own releases.
+            owner: process.env.NETCATTY_UPDATE_FEED_OWNER || 'binaricat',
+            repo: process.env.NETCATTY_UPDATE_FEED_REPO || 'Netcatty',
             releaseType: 'release'
         }
     ]
