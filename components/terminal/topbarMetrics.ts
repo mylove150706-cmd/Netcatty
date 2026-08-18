@@ -10,6 +10,7 @@ export interface TerminalTopbarMetrics {
   textPx: number;
   statsPx: number;
   iconPx: number;
+  iconSmPx: number;
   iconLgPx: number;
   buttonPx: number;
   terminalOffsetPx: number;
@@ -33,6 +34,7 @@ export function terminalTopbarMetrics(height: number): TerminalTopbarMetrics {
     textPx: scale(11, h, 9, 17),
     statsPx: scale(10, h, 8, 16),
     iconPx: scale(10, h, 8, 16),
+    iconSmPx: scale(9, h, 8, 14),
     iconLgPx: scale(12, h, 9, 19),
     buttonPx: scale(24, h, 20, 36),
     terminalOffsetPx: h + 4,

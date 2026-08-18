@@ -9,6 +9,7 @@ test('default height 28 reproduces every current hardcoded size exactly', () => 
   assert.equal(m.textPx, 11);
   assert.equal(m.statsPx, 10);
   assert.equal(m.iconPx, 10);
+  assert.equal(m.iconSmPx, 9);
   assert.equal(m.iconLgPx, 12);
   assert.equal(m.buttonPx, 24);
   assert.equal(m.terminalOffsetPx, 32);
@@ -20,6 +21,7 @@ test('content scales proportionally with height', () => {
   assert.equal(m.textPx, 14);   // round(11 * 36/28) = 14
   assert.equal(m.statsPx, 13);  // round(10 * 36/28) = 13
   assert.equal(m.iconPx, 13);
+  assert.equal(m.iconSmPx, 12); // round(9 * 36/28) = round(11.57) = 12
   assert.equal(m.iconLgPx, 15); // round(12 * 36/28) = 15
   assert.equal(m.buttonPx, 31); // round(24 * 36/28) = 31
   assert.equal(m.terminalOffsetPx, 40);
@@ -30,6 +32,7 @@ test('endpoints 22 and 44 respect per-field clamps', () => {
   assert.equal(low.textPx, 9);
   assert.equal(low.statsPx, 8);
   assert.equal(low.iconPx, 8);
+  assert.equal(low.iconSmPx, 8); // round(7.07) = 7 clamped to 8
   assert.equal(low.iconLgPx, 9);
   assert.equal(low.buttonPx, 20); // round(18.86)=19 clamped to 20
   assert.equal(low.terminalOffsetPx, 26);
@@ -38,6 +41,7 @@ test('endpoints 22 and 44 respect per-field clamps', () => {
   assert.equal(high.textPx, 17);
   assert.equal(high.statsPx, 16);
   assert.equal(high.iconPx, 16);
+  assert.equal(high.iconSmPx, 14); // round(14.14) = 14
   assert.equal(high.iconLgPx, 19);
   assert.equal(high.buttonPx, 36); // round(37.71)=38 clamped to 36
   assert.equal(high.terminalOffsetPx, 48);
@@ -49,4 +53,5 @@ test('input is clamped into range and invalid input falls back to default', () =
   assert.equal(terminalTopbarMetrics(Number.NaN).heightPx, 28);
   const fallback = terminalTopbarMetrics(Number.NaN);
   assert.equal(fallback.textPx, 11);
+  assert.equal(fallback.iconSmPx, 9);
 });

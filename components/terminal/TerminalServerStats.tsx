@@ -324,11 +324,11 @@ export const TerminalServerStats: React.FC<TerminalServerStatsProps> = ({
                         className="flex items-center gap-1 hover:opacity-100 opacity-80 transition-opacity cursor-pointer min-w-0 shrink"
                         aria-label={t("terminal.serverStats.network")}
                       >
-                        <ArrowDownToLine size={9} className="flex-shrink-0 text-emerald-400 terminal-topbar-icon" />
+                        <ArrowDownToLine size={9} className="flex-shrink-0 text-emerald-400 terminal-topbar-icon-sm" />
                         <span className="truncate">{formatNetSpeed(serverStats.netRxSpeed)}</span>
-                        <ArrowUpFromLine size={9} className="flex-shrink-0 text-sky-400 terminal-topbar-icon" />
+                        <ArrowUpFromLine size={9} className="flex-shrink-0 text-sky-400 terminal-topbar-icon-sm" />
                         <span className="truncate">{formatNetSpeed(serverStats.netTxSpeed)}</span>
-                        <Activity size={9} className="flex-shrink-0 text-violet-400 terminal-topbar-icon" />
+                        <Activity size={9} className="flex-shrink-0 text-violet-400 terminal-topbar-icon-sm" />
                         <span className="truncate">{formatLatency(serverStats.latencyMs)}</span>
                       </button>
                     </HoverCardTrigger>

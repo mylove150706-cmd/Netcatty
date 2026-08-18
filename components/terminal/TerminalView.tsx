@@ -583,6 +583,7 @@ function TerminalViewInner({ ctx }: { ctx: TerminalViewContext }) {
               ['--terminal-topbar-text' as never]: `${topbarMetrics.textPx}px`,
               ['--terminal-topbar-stats' as never]: `${topbarMetrics.statsPx}px`,
               ['--terminal-topbar-icon' as never]: `${topbarMetrics.iconPx}px`,
+              ['--terminal-topbar-icon-sm' as never]: `${topbarMetrics.iconSmPx}px`,
               ['--terminal-topbar-icon-lg' as never]: `${topbarMetrics.iconLgPx}px`,
               ['--terminal-topbar-btn-h' as never]: `${topbarMetrics.buttonPx}px`,
               height: `${topbarMetrics.heightPx}px`,
@@ -795,7 +796,7 @@ function TerminalViewInner({ ctx }: { ctx: TerminalViewContext }) {
                           onClick={onDetach}
                           aria-label={t('terminal.toolbar.detach')}
                         >
-                          <SquareArrowOutUpRight size={12} className="terminal-topbar-icon" />
+                          <SquareArrowOutUpRight size={12} className="terminal-topbar-icon-lg" />
                         </Button>
                       </TooltipTrigger>
                       <TooltipContent side="bottom">{t('terminal.toolbar.detach')}</TooltipContent>
@@ -811,7 +812,7 @@ function TerminalViewInner({ ctx }: { ctx: TerminalViewContext }) {
                           onClick={onExpandToFocus}
                           aria-label={t("terminal.toolbar.focusMode")}
                         >
-                          <Maximize2 size={12} className="terminal-topbar-icon" />
+                          <Maximize2 size={12} className="terminal-topbar-icon-lg" />
                         </Button>
                       </TooltipTrigger>
                       <TooltipContent side="bottom">{t("terminal.toolbar.focusMode")}</TooltipContent>
