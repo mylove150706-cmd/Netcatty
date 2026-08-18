@@ -7,7 +7,11 @@ import {
 import { runThemeTransition } from "./themeTransition";
 import { TERMINAL_THEMES } from "../../infrastructure/config/terminalThemes";
 import { netcattyBridge } from "../../infrastructure/services/netcattyBridge";
-import { neutralChromeForegroundToken, resolveReadableForegroundForHsl } from "../../domain/colorContrast";
+import {
+  neutralChromeAccentToken,
+  neutralChromeForegroundToken,
+  resolveReadableForegroundForHsl,
+} from "../../domain/colorContrast";
 
 function hexToHsl(hex: string): string {
   const r = parseInt(hex.slice(1, 3), 16) / 255;
@@ -74,7 +78,7 @@ function buildChromeCss(theme: TerminalTheme): string {
   const bg = hexToHsl(theme.colors.background);
   const isDark = theme.type === "dark";
   const fg = neutralChromeForegroundToken(hexToHsl(theme.colors.foreground), isDark);
-  const cursor = hexToHsl(theme.colors.cursor);
+  const cursor = neutralChromeAccentToken(hexToHsl(theme.colors.cursor), isDark);
   const card = adjustLightness(bg, isDark ? 4 : -3);
   const secondary = adjustLightness(bg, isDark ? 6 : -5);
   const muted = adjustLightness(bg, isDark ? 10 : -8);

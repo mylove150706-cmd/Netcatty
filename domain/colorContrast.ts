@@ -80,3 +80,17 @@ export const neutralChromeForegroundToken = (value: string, isDark: boolean): st
   const lightness = Math.round(Math.min(max, Math.max(min, parsed.lightness * 100)) * 10) / 10;
   return `0 0% ${lightness}%`;
 };
+
+/**
+ * Same policy as the foreground channel for accent-driven chrome surfaces
+ * (sidebar icons, section headers, toggles): drop the terminal cursor hue so
+ * a themed terminal does not repaint the whole app chrome.
+ */
+export const neutralChromeAccentToken = (value: string, isDark: boolean): string => {
+  const parsed = parseHslToken(value);
+  if (!parsed) return value;
+  const min = isDark ? 78 : 20;
+  const max = isDark ? 90 : 35;
+  const lightness = Math.round(Math.min(max, Math.max(min, parsed.lightness * 100)) * 10) / 10;
+  return `0 0% ${lightness}%`;
+};

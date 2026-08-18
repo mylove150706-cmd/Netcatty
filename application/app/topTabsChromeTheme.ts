@@ -1,5 +1,9 @@
 import type { TerminalTheme } from '../../types';
-import { neutralChromeForegroundToken, resolveReadableForegroundForHsl } from '../../domain/colorContrast';
+import {
+  neutralChromeAccentToken,
+  neutralChromeForegroundToken,
+  resolveReadableForegroundForHsl,
+} from '../../domain/colorContrast';
 
 function hexToHslToken(hex: string): string {
   const normalized = hex.startsWith('#') ? hex : `#${hex}`;
@@ -91,7 +95,7 @@ export function applyTopTabsChromeThemeVars(theme: TerminalTheme): void {
   const bg = hexToHslToken(theme.colors.background);
   const isDark = theme.type === 'dark';
   const fg = neutralChromeForegroundToken(hexToHslToken(theme.colors.foreground), isDark);
-  const accent = hexToHslToken(theme.colors.cursor);
+  const accent = neutralChromeAccentToken(hexToHslToken(theme.colors.cursor), isDark);
   const accentForeground = resolveReadableForegroundForHsl(accent);
   const secondary = adjustLightnessToken(bg, isDark ? 6 : -5);
   const border = adjustLightnessToken(bg, isDark ? 12 : -10);
