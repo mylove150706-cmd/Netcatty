@@ -96,7 +96,7 @@ test("localized settings include terminal font weight option labels", () => {
 });
 
 test("localized settings include host info bar height labels", () => {
-  const keys = ["settings.terminal.hostInfoBar.height"];
+  const keys = ["settings.terminal.hostInfoBar.height", "settings.terminal.hostInfoBar.height.desc"];
 
   for (const locale of LOCALIZED_SETTINGS_LOCALES) {
     const missing = keys.filter((key) => !locale.messages[key]);

@@ -1055,7 +1055,7 @@ export const TerminalToolbar: React.FC<TerminalToolbarProps> = ({
             <Button
               variant="ghost"
               size="icon"
-              className="h-6 w-6 text-[color:var(--terminal-toolbar-fg)] hover:bg-transparent"
+              className="h-[length:var(--terminal-topbar-btn-h,1.5rem)] w-[length:var(--terminal-topbar-btn-h,1.5rem)] text-[color:var(--terminal-toolbar-fg)] hover:bg-transparent"
               onClick={(e) => {
                 e.stopPropagation();
                 onClose();
