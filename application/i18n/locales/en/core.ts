@@ -705,6 +705,8 @@ Highlight the focused split pane:
   'settings.terminal.hostInfoBar.titleMode.desc': 'Choose whether the bar shows the connection address (user@host) or the vault host label.',
   'settings.terminal.hostInfoBar.titleMode.address': 'Connection address',
   'settings.terminal.hostInfoBar.titleMode.label': 'Host label',
+  'settings.terminal.hostInfoBar.height': 'Info Bar Height',
+  'settings.terminal.hostInfoBar.height.desc': 'Adjust the height of the host info bar above the terminal; its text and icons scale with it.',
   'settings.terminal.section.systemManager': 'System Manager',
   'settings.terminal.systemManager.processRefreshInterval': 'Process list refresh',
   'settings.terminal.systemManager.processRefreshInterval.desc': 'How often to refresh the process list in the system manager side panel.',

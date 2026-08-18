@@ -427,6 +427,8 @@ export const zhCNTerminalMessages: Messages = {
   'settings.terminal.hostInfoBar.titleMode.desc': '选择信息栏显示连接地址（user@host）还是主机名称（Vault 标签）。',
   'settings.terminal.hostInfoBar.titleMode.address': '连接地址',
   'settings.terminal.hostInfoBar.titleMode.label': '主机名称',
+  'settings.terminal.hostInfoBar.height': '信息栏高度',
+  'settings.terminal.hostInfoBar.height.desc': '调整终端上方主机信息栏的高度，条内文字和图标随之缩放。',
   'settings.terminal.serverStats.show': '显示服务器状态',
   'settings.terminal.serverStats.show.desc': '在终端状态栏显示 CPU、内存和磁盘使用情况（仅限 Linux 服务器）。',
   'settings.terminal.serverStats.refreshInterval': '刷新间隔',

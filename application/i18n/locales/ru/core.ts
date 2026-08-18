@@ -658,6 +658,8 @@ export const ruCoreMessages: Messages = {
   'settings.terminal.hostInfoBar.titleMode.desc': 'Показывать в панели адрес подключения (user@host) или метку хоста из хранилища.',
   'settings.terminal.hostInfoBar.titleMode.address': 'Адрес подключения',
   'settings.terminal.hostInfoBar.titleMode.label': 'Метка хоста',
+  'settings.terminal.hostInfoBar.height': 'Высота панели информации',
+  'settings.terminal.hostInfoBar.height.desc': 'Настройка высоты панели информации над терминалом; текст и значки масштабируются вместе с ней.',
   'settings.terminal.section.systemManager': 'Системный менеджер',
   'settings.terminal.systemManager.processRefreshInterval': 'Обновление списка процессов',
   'settings.terminal.systemManager.processRefreshInterval.desc': 'Как часто обновлять список процессов в боковой панели системного менеджера.',

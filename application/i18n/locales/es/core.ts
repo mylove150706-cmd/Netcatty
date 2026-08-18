@@ -705,6 +705,8 @@ Resalta el panel dividido enfocado:
   'settings.terminal.hostInfoBar.titleMode.desc': 'Elige si la barra muestra la dirección de la conexión (usuario@host) o la etiqueta del host del vault.',
   'settings.terminal.hostInfoBar.titleMode.address': 'Dirección de conexión',
   'settings.terminal.hostInfoBar.titleMode.label': 'Etiqueta del host',
+  'settings.terminal.hostInfoBar.height': 'Altura de la barra de información',
+  'settings.terminal.hostInfoBar.height.desc': 'Ajusta la altura de la barra de información sobre la terminal; el texto y los iconos se escalan con ella.',
   'settings.terminal.section.systemManager': 'Administrador del sistema',
   'settings.terminal.systemManager.processRefreshInterval': 'Actualización de la lista de procesos',
   'settings.terminal.systemManager.processRefreshInterval.desc': 'Con qué frecuencia actualizar la lista de procesos en el panel lateral del administrador del sistema.',

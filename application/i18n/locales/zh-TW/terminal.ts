@@ -427,6 +427,8 @@ export const zhTWTerminalMessages: Messages = {
   'settings.terminal.hostInfoBar.titleMode.desc': '選擇資訊列顯示連線地址（user@host）還是主機名稱（Vault 標籤）。',
   'settings.terminal.hostInfoBar.titleMode.address': '連線地址',
   'settings.terminal.hostInfoBar.titleMode.label': '主機名稱',
+  'settings.terminal.hostInfoBar.height': '資訊欄高度',
+  'settings.terminal.hostInfoBar.height.desc': '調整終端上方主機資訊欄的高度，條內文字和圖示隨之縮放。',
   'settings.terminal.serverStats.show': '顯示伺服器狀態',
   'settings.terminal.serverStats.show.desc': '在終端狀態列顯示 CPU、記憶體和磁碟使用情況（僅限 Linux 伺服器）。',
   'settings.terminal.serverStats.refreshInterval': '重新整理間隔',

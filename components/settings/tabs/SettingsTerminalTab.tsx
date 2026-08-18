@@ -946,20 +946,42 @@ function SettingsTerminalTab(props: {
           />
         </SettingRow>
         {terminalSettings.showHostInfoBar && (
-          <SettingRow
-            label={t("settings.terminal.hostInfoBar.titleMode")}
-            description={t("settings.terminal.hostInfoBar.titleMode.desc")}
-          >
-            <Select
-              value={terminalSettings.hostInfoBarTitleMode ?? "address"}
-              options={[
-                { value: "address", label: t("settings.terminal.hostInfoBar.titleMode.address") },
-                { value: "label", label: t("settings.terminal.hostInfoBar.titleMode.label") },
-              ]}
-              onChange={(v) => updateTerminalSetting("hostInfoBarTitleMode", v as HostInfoBarTitleMode)}
-              className="w-44"
-            />
-          </SettingRow>
+          <>
+            <SettingRow
+              label={t("settings.terminal.hostInfoBar.titleMode")}
+              description={t("settings.terminal.hostInfoBar.titleMode.desc")}
+            >
+              <Select
+                value={terminalSettings.hostInfoBarTitleMode ?? "address"}
+                options={[
+                  { value: "address", label: t("settings.terminal.hostInfoBar.titleMode.address") },
+                  { value: "label", label: t("settings.terminal.hostInfoBar.titleMode.label") },
+                ]}
+                onChange={(v) => updateTerminalSetting("hostInfoBarTitleMode", v as HostInfoBarTitleMode)}
+                className="w-44"
+              />
+            </SettingRow>
+            <SettingRow
+              anchorId="terminal-host-info-bar-height"
+              label={t("settings.terminal.hostInfoBar.height")}
+              description={t("settings.terminal.hostInfoBar.height.desc")}
+            >
+              <div className="flex items-center gap-2">
+                <input
+                  type="range"
+                  min={22}
+                  max={44}
+                  step={1}
+                  value={terminalSettings.hostInfoBarHeight ?? 28}
+                  onChange={(e) => updateTerminalSetting("hostInfoBarHeight", parseInt(e.target.value))}
+                  className="w-24 accent-primary"
+                />
+                <span className="text-sm text-muted-foreground w-8 text-center">
+                  {terminalSettings.hostInfoBarHeight ?? 28}px
+                </span>
+              </div>
+            </SettingRow>
+          </>
         )}
         <SettingRow
           anchorId="terminal-server-stats-show"
