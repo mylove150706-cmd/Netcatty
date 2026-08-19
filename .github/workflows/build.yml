@@ -192,6 +192,9 @@ jobs:
       VITE_SYNC_GOOGLE_CLIENT_ID: ${{ secrets.VITE_SYNC_GOOGLE_CLIENT_ID }}
       VITE_SYNC_GOOGLE_CLIENT_SECRET: ${{ secrets.VITE_SYNC_GOOGLE_CLIENT_SECRET }}
       VITE_SYNC_ONEDRIVE_CLIENT_ID: ${{ secrets.VITE_SYNC_ONEDRIVE_CLIENT_ID }}
+      # Renderer update notice must announce the feed that produced this build.
+      VITE_UPDATE_FEED_OWNER: ${{ vars.NETCATTY_UPDATE_FEED_OWNER || github.repository_owner }}
+      VITE_UPDATE_FEED_REPO: ${{ vars.NETCATTY_UPDATE_FEED_REPO || 'Netcatty' }}
     steps:
       - name: Validate bundled mosh-client release
         if: env.BUNDLE_MOSH == 'true'
@@ -380,6 +383,9 @@ jobs:
       VITE_SYNC_GOOGLE_CLIENT_ID: ${{ secrets.VITE_SYNC_GOOGLE_CLIENT_ID }}
       VITE_SYNC_GOOGLE_CLIENT_SECRET: ${{ secrets.VITE_SYNC_GOOGLE_CLIENT_SECRET }}
       VITE_SYNC_ONEDRIVE_CLIENT_ID: ${{ secrets.VITE_SYNC_ONEDRIVE_CLIENT_ID }}
+      # Renderer update notice must announce the feed that produced this build.
+      VITE_UPDATE_FEED_OWNER: ${{ vars.NETCATTY_UPDATE_FEED_OWNER || github.repository_owner }}
+      VITE_UPDATE_FEED_REPO: ${{ vars.NETCATTY_UPDATE_FEED_REPO || 'Netcatty' }}
     steps:
       - name: Validate bundled mosh-client release
         if: env.BUNDLE_MOSH == 'true'
@@ -663,6 +669,9 @@ jobs:
       VITE_SYNC_GOOGLE_CLIENT_ID: ${{ secrets.VITE_SYNC_GOOGLE_CLIENT_ID }}
       VITE_SYNC_GOOGLE_CLIENT_SECRET: ${{ secrets.VITE_SYNC_GOOGLE_CLIENT_SECRET }}
       VITE_SYNC_ONEDRIVE_CLIENT_ID: ${{ secrets.VITE_SYNC_ONEDRIVE_CLIENT_ID }}
+      # Renderer update notice must announce the feed that produced this build.
+      VITE_UPDATE_FEED_OWNER: ${{ vars.NETCATTY_UPDATE_FEED_OWNER || github.repository_owner }}
+      VITE_UPDATE_FEED_REPO: ${{ vars.NETCATTY_UPDATE_FEED_REPO || 'Netcatty' }}
     steps:
       - name: Validate bundled mosh-client release
         if: env.BUNDLE_MOSH == 'true'

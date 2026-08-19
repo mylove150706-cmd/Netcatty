@@ -12,8 +12,28 @@ import { netcattyBridge } from "./netcattyBridge";
 // Part 1: GitHub API Version Check
 // ================================
 
-const GITHUB_API_URL = 'https://api.github.com/repos/binaricat/Netcatty/releases/latest';
-const RELEASES_PAGE_URL = 'https://github.com/binaricat/Netcatty/releases';
+// Update-notice feed follows the repository that produced this build
+// (VITE_UPDATE_FEED_OWNER, injected by CI next to NETCATTY_UPDATE_FEED_OWNER)
+// so fork builds announce and link to their own releases.
+const readBuildEnv = (key: string): string | undefined => {
+  const env = (import.meta as { env?: Record<string, string | undefined> }).env;
+  const value = env?.[key];
+  return value && value.trim().length ? value : undefined;
+};
+
+export const buildUpdateFeedUrls = (owner: string, repo: string): {
+  api: string;
+  releasesPage: string;
+} => ({
+  api: `https://api.github.com/repos/${owner}/${repo}/releases/latest`,
+  releasesPage: `https://github.com/${owner}/${repo}/releases`,
+});
+
+const UPDATE_FEED_OWNER = readBuildEnv('VITE_UPDATE_FEED_OWNER') || 'binaricat';
+const UPDATE_FEED_REPO = readBuildEnv('VITE_UPDATE_FEED_REPO') || 'Netcatty';
+const FEED_URLS = buildUpdateFeedUrls(UPDATE_FEED_OWNER, UPDATE_FEED_REPO);
+const GITHUB_API_URL = FEED_URLS.api;
+const RELEASES_PAGE_URL = FEED_URLS.releasesPage;
 
 export interface ReleaseInfo {
   version: string;       // e.g. "1.0.0" (without 'v' prefix)
