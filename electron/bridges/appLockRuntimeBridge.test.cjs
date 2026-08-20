@@ -559,6 +559,38 @@ test("parallel password attempts share one bounded in-flight verification", asyn
   assert.deepEqual(delays, [250]);
 });
 
+test("background lock is skipped when automatic timeout is never", async () => {
+  const { controller, runtimeBridge } = await createControllerHarness();
+  await controller.requestPasswordChange({ nextPassword: "alpha" });
+  await controller.requestUnlock("alpha");
+  await controller.setTimeoutMinutes(0);
+
+  const background = controller.setLocked("background");
+  assert.equal(background.locked, false);
+  assert.equal(runtimeBridge.getState().locked, false);
+  assert.equal(runtimeBridge.getState().reason, null);
+
+  const manual = controller.setLocked("manual");
+  assert.equal(manual.locked, true);
+  assert.equal(runtimeBridge.getState().reason, "manual");
+
+  await controller.requestUnlock("alpha");
+  const startup = controller.setLocked("startup");
+  assert.equal(startup.locked, true);
+  assert.equal(runtimeBridge.getState().reason, "startup");
+});
+
+test("background lock still applies when an inactivity timeout is set", async () => {
+  const { controller, runtimeBridge } = await createControllerHarness();
+  await controller.requestPasswordChange({ nextPassword: "alpha" });
+  await controller.requestUnlock("alpha");
+  await controller.setTimeoutMinutes(5);
+
+  const background = controller.setLocked("background");
+  assert.equal(background.locked, true);
+  assert.equal(runtimeBridge.getState().reason, "background");
+});
+
 test("password unlock result is discarded after a newer lock transition", async () => {
   const { controller, runtimeBridge } = await createControllerHarness();
   await controller.requestPasswordChange({ nextPassword: "alpha" });
@@ -767,6 +799,55 @@ test("idle lock closes DevTools in every app window", async () => {
       });
     });
   });
+});
+
+function emitSystemContextMenu(win) {
+  let preventDefaultCount = 0;
+  win.emit("system-context-menu", {
+    preventDefault() {
+      preventDefaultCount += 1;
+    },
+  });
+  return preventDefaultCount;
+}
+
+test("lock suppresses the native system context menu on every app window", async () => {
+  const { controller, windows } = await createControllerHarness();
+  await controller.requestPasswordChange({ nextPassword: "alpha" });
+
+  for (const win of windows) {
+    assert.equal(
+      emitSystemContextMenu(win),
+      1,
+      `${win.name} should hide the native window menu while locked`,
+    );
+  }
+
+  await controller.requestUnlock("alpha");
+  for (const win of windows) {
+    assert.equal(
+      emitSystemContextMenu(win),
+      0,
+      `${win.name} should keep the native window menu after unlock`,
+    );
+  }
+
+  controller.setLocked("manual");
+  for (const win of windows) {
+    assert.equal(
+      emitSystemContextMenu(win),
+      1,
+      `${win.name} should hide the native window menu after re-lock`,
+    );
+  }
+});
+
+test("newly opened windows suppress the native system context menu while locked", async () => {
+  const { controller } = await createControllerHarness();
+  const newWindow = createWindowCollector("new-session");
+  controller.protectWindow(newWindow);
+
+  assert.equal(emitSystemContextMenu(newWindow), 1);
 });
 
 test("startup lock immediately protects existing and newly opened windows", async () => {
