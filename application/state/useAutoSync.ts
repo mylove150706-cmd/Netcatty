@@ -48,6 +48,10 @@ import {
   getRuntimeRemoteCheckIntervalMs,
   shouldRunRuntimeRemoteCheck,
 } from './autoSyncRemoteSchedule';
+import {
+  getAutoSyncScheduleDelayMs,
+  nextAutoSyncBackoffDelay,
+} from './autoSyncBackoff';
 import { resolveAutoSyncHashDecision } from './autoSyncHashDecision';
 import { getNotesSnapshot, subscribeNotes } from './notesStore';
 
@@ -191,6 +195,8 @@ export const useAutoSync = (config: AutoSyncConfig) => {
   const { onApplyPayload, onApplyConvergentPayload } = config;
   const syncTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const lastSyncedDataRef = useRef<string>('');
+  /** Held failure-backoff delay for the debounced auto-sync; null = no streak. */
+  const autoSyncBackoffMsRef = useRef<number | null>(null);
   const hasCheckedRemoteRef = useRef(false);
   const inspectFailureToastShownRef = useRef(false);
   /** True once checkRemoteVersion has completed (success or failure). Until
@@ -494,6 +500,9 @@ export const useAutoSync = (config: AutoSyncConfig) => {
       commitPluginSidecarsAfterSuccessfulSync(payload, resultList);
 
       lastSyncedDataRef.current = dataHash;
+      // Any successful sync (manual or auto) clears the failure streak so the
+      // next edit-driven push starts from the base debounce again.
+      autoSyncBackoffMsRef.current = null;
       manager.setPendingLocalSync(false);
 
       // Successful sync implies a successful per-provider
@@ -1002,6 +1011,9 @@ export const useAutoSync = (config: AutoSyncConfig) => {
         clearTimeout(syncTimeoutRef.current);
         syncTimeoutRef.current = null;
       }
+      // Turning auto-sync off ends the failure streak; re-enabling starts
+      // fresh from the base debounce instead of a stale backoff.
+      autoSyncBackoffMsRef.current = null;
       return;
     }
 
@@ -1089,11 +1101,19 @@ export const useAutoSync = (config: AutoSyncConfig) => {
         }
 
         const didSync = await syncNow();
-        if (didSync && skipHash !== null && skipNextSyncHashRef.current === skipHash) {
-          skipNextSyncHashRef.current = null;
+        if (didSync) {
+          autoSyncBackoffMsRef.current = null;
+          if (skipHash !== null && skipNextSyncHashRef.current === skipHash) {
+            skipNextSyncHashRef.current = null;
+          }
+        } else {
+          // A failed attempt leaves the edit pending and the effect re-runs on
+          // the isSyncing flip — without doubling here that would retry every
+          // ~3s and spam failure toasts for as long as the network is down.
+          autoSyncBackoffMsRef.current = nextAutoSyncBackoffDelay(autoSyncBackoffMsRef.current);
         }
       })();
-    }, 3000);
+    }, getAutoSyncScheduleDelayMs(autoSyncBackoffMsRef.current));
     
     return () => {
       cancelled = true;

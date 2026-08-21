@@ -190,7 +190,7 @@ test("auto-sync skips only the exact remote-applied data hash", () => {
   const restoreGuardIndex = source.indexOf("if (isRestoreInProgress())", decisionIndex);
   const interruptedGuardIndex = source.indexOf("if (readInterruptedVaultApply())", decisionIndex);
   const syncNowIndex = source.indexOf("const didSync = await syncNow();", interruptedGuardIndex);
-  const didSyncGuardIndex = source.indexOf("if (didSync && skipHash !== null", syncNowIndex);
+  const didSyncGuardIndex = source.indexOf("if (didSync) {", syncNowIndex);
   const clearAfterSyncIndex = source.indexOf("skipNextSyncHashRef.current = null;", didSyncGuardIndex);
   const booleanSkipIndex = source.indexOf("skipNextSyncRef");
 
@@ -219,7 +219,9 @@ test("auto-sync skips only the exact remote-applied data hash", () => {
 });
 
 test("auto syncNow and debounce re-check manager autoSyncEnabled before pushing", () => {
-  const source = readFileSync(new URL("./useAutoSync.ts", import.meta.url), "utf8");
+  // Normalize line endings so the multi-line needle below also matches on
+  // CRLF working copies (CI checks out LF).
+  const source = readFileSync(new URL("./useAutoSync.ts", import.meta.url), "utf8").replace(/\r\n/g, "\n");
   const helperIndex = source.indexOf("function isPersistedAutoSyncEnabled");
   const syncNowIndex = source.indexOf("const syncNow = useCallback");
   const autoGateIndex = source.indexOf(
@@ -232,7 +234,7 @@ test("auto syncNow and debounce re-check manager autoSyncEnabled before pushing"
     debounceIndex,
   );
   const clearTimerIndex = source.indexOf(
-    "if (syncTimeoutRef.current) {\n        clearTimeout(syncTimeoutRef.current);\n        syncTimeoutRef.current = null;\n      }\n      return;",
+    "if (syncTimeoutRef.current) {\n        clearTimeout(syncTimeoutRef.current);\n        syncTimeoutRef.current = null;\n      }\n      // Turning auto-sync off ends the failure streak; re-enabling starts\n      // fresh from the base debounce instead of a stale backoff.\n      autoSyncBackoffMsRef.current = null;\n      return;",
     debounceIndex,
   );
 
@@ -292,5 +294,30 @@ test("startup local-wins and merge round-trips refuse device-bound credential pl
       && mergeRemoteHealIndex < mergeRoundTripBlockIndex
       && mergeRoundTripBlockIndex < mergePushIndex,
     "startup merge must heal local+remote secrets, then strip, then upload",
+  );
+});
+
+test("debounced auto-sync applies failure backoff and clears it on success", () => {
+  const source = readFileSync(new URL("./useAutoSync.ts", import.meta.url), "utf8");
+  const debounceTimerIndex = source.indexOf(
+    "getAutoSyncScheduleDelayMs(autoSyncBackoffMsRef.current)",
+    source.indexOf("Debounce first, then build the expensive full-data hash"),
+  );
+  const failureDoubleIndex = source.indexOf(
+    "autoSyncBackoffMsRef.current = nextAutoSyncBackoffDelay(autoSyncBackoffMsRef.current);",
+  );
+  const successResetIndex = source.indexOf("autoSyncBackoffMsRef.current = null;");
+  const readinessResetIndex = source.indexOf(
+    "autoSyncBackoffMsRef.current = null;",
+    source.indexOf("Drop any pending debounce when auto-sync (or readiness) turns off"),
+  );
+
+  assert.notEqual(debounceTimerIndex, -1);
+  assert.notEqual(failureDoubleIndex, -1);
+  assert.notEqual(successResetIndex, -1);
+  assert.notEqual(readinessResetIndex, -1);
+  assert.ok(
+    successResetIndex < failureDoubleIndex,
+    "a successful sync must clear the failure streak before any later failure can double it",
   );
 });
