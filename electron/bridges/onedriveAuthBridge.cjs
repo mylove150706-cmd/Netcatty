@@ -10,7 +10,7 @@ const ONEDRIVE_GRAPH_API = "https://graph.microsoft.com/v1.0";
 const APP_FOLDER_PATH = "/drive/special/approot";
 const DEFAULT_SYNC_FILE_NAME = "netcatty-vault.json";
 const DEFAULT_SCOPE =
-  "https://graph.microsoft.com/Files.ReadWrite.AppFolder https://graph.microsoft.com/User.Read offline_access";
+  "https://graph.microsoft.com/Files.ReadWrite https://graph.microsoft.com/User.Read offline_access";
 
 // Stable marker prefixed onto refresh errors when Microsoft says the refresh
 // token itself is dead (expired/revoked/consent withdrawn). Only IPC error

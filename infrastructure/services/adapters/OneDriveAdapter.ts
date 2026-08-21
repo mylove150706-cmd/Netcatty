@@ -44,7 +44,7 @@ export interface DriveItem {
 }
 
 const ONEDRIVE_SCOPES = [
-  'https://graph.microsoft.com/Files.ReadWrite.AppFolder',
+  'https://graph.microsoft.com/Files.ReadWrite',
   'https://graph.microsoft.com/User.Read',
   'offline_access',
 ];
