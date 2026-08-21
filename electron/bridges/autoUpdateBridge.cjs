@@ -107,6 +107,10 @@ function getAutoUpdater() {
     const { autoUpdater } = require("electron-updater");
     autoUpdater.autoDownload = readAutoUpdatePreference();
     autoUpdater.autoInstallOnAppQuit = false;
+    // Fork releases use semver prerelease tags (vX.Y.Z-fork.N) to slot between
+    // upstream versions; without this the updater ignores them once the
+    // installed build is itself a plain release.
+    autoUpdater.allowPrerelease = true;
     // Silence the default electron-log transport (we log ourselves).
     autoUpdater.logger = null;
     _autoUpdater = autoUpdater;
