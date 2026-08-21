@@ -722,7 +722,15 @@ export const SYNC_STORAGE_KEYS = {
 const readBuildEnv = (key: string): string | undefined => {
   const env = (import.meta as { env?: Record<string, string | undefined> }).env;
   const value = env?.[key];
-  return value && value.trim().length ? value : undefined;
+  if (value && value.trim().length) return value;
+  // Builds without baked-in credentials (e.g. fork builds without repo
+  // secrets) can supply them via a netcatty-sync.env file in userData; the
+  // preload exposes it as a plain object before this module evaluates.
+  const runtime = (globalThis as {
+    netcatty?: { runtimeSyncEnv?: Record<string, string | undefined> };
+  }).netcatty?.runtimeSyncEnv;
+  const fromFile = runtime?.[key];
+  return fromFile && fromFile.trim().length ? fromFile : undefined;
 };
 
 export const SYNC_CONSTANTS = {

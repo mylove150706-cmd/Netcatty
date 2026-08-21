@@ -482,6 +482,8 @@ function createBridgeRegistrar(context) {
     });
     systemManagerBridge.registerHandlers(ipcMain, { terminalWorkerManager });
     oauthBridge.setupOAuthBridge(ipcMain);
+    const { registerSyncEnvBridge } = require("../bridges/syncEnvBridge.cjs");
+    registerSyncEnvBridge(ipcMain, app);
     githubAuthBridge.registerHandlers(ipcMain, electronModule);
     googleAuthBridge.registerHandlers(ipcMain, electronModule);
     onedriveAuthBridge.registerHandlers(ipcMain, electronModule);

@@ -858,6 +858,16 @@ const figSpecApi = {
 // Merge with existing netcatty (if any) to avoid stale objects on hot reload
 const existing = (typeof window !== "undefined" && window.netcatty) ? window.netcatty : {};
 
+// Runtime sync credentials (netcatty-sync.env in userData) must be in hand
+// before exposure: the renderer reads them synchronously while evaluating
+// SYNC_CONSTANTS at module scope.
+let runtimeSyncEnv = {};
+try {
+  runtimeSyncEnv = ipcRenderer.sendSync("netcatty:syncEnv:get") || {};
+} catch {
+  runtimeSyncEnv = {};
+}
+
 function getAllowedRendererOrigins() {
   const origins = new Set(["app://netcatty"]);
   const devServerUrl = process.env.VITE_DEV_SERVER_URL;
@@ -895,7 +905,7 @@ function isTrustedRendererLocation(allowedOrigins) {
 
 const allowedOrigins = getAllowedRendererOrigins();
 if (isTrustedRendererLocation(allowedOrigins)) {
-  contextBridge.exposeInMainWorld("netcatty", { ...existing, ...api, ...figSpecApi });
+  contextBridge.exposeInMainWorld("netcatty", { ...existing, ...api, ...figSpecApi, runtimeSyncEnv });
 } else {
   // If a window navigates to an untrusted origin, do NOT expose the bridge.
   try {
