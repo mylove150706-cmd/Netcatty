@@ -508,7 +508,8 @@ export const downloadSyncGist = async (
     if (response.status === 404) {
       return null;
     }
-    throw new Error(`Failed to download gist: ${response.statusText}`);
+    // GitHub API sends no reason phrase over HTTP/2, so statusText is always empty.
+    throw new Error(`Failed to download gist (HTTP ${response.status})`);
   }
 
   const gist: GitHubGist = await response.json();
@@ -584,7 +585,7 @@ export const downloadGistRevision = async (
 
   if (!response.ok) {
     if (response.status === 404) return null;
-    throw new Error(`Failed to download gist revision: ${response.statusText}`);
+    throw new Error(`Failed to download gist revision (HTTP ${response.status})`);
   }
 
   const gist: GitHubGist = await response.json();
